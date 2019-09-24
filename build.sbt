@@ -5,13 +5,14 @@ homepage := Some(new URL("https://github.com/dacr/drools-scripting"))
 
 
 scalaVersion := "2.13.0"
+crossScalaVersions := Seq("2.13.0", "2.12.10")
 
 libraryDependencies ++= Seq(
   "org.drools" % "drools-core" % "7.26.0.Final",
   "org.drools" % "drools-compiler" % "7.26.0.Final",
   "org.slf4j" % "slf4j-api" % "1.7.28",
   "org.scalatest" %% "scalatest" % "3.0.8" % "test",
-  "ch.qos.logback" % "logback-classic" % "1.2.3" % "test",
+  "ch.qos.logback" % "logback-classic" % "1.2.3",
 )
 
 pomIncludeRepository := { _ => false }
