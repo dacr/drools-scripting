@@ -66,7 +66,9 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
   private val container = services.newKieContainer( module.getReleaseId())
   private val session = container.newKieSession()
   services.getLoggers.newConsoleLogger(session)
-  session.setGlobal("logger", logger)
+  if ("""\s*global\s+org.slf4j.Logger\s*logger\s*""".r.findFirstIn(drl).isDefined) {
+    session.setGlobal("logger", logger)
+  }
 
 
   def timeShiftInSeconds(seconds:Int):Unit = {

@@ -12,17 +12,14 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
   "Drools" should "say hello" in {
     val drl =
       """package testdrools
-        |
-        |global org.slf4j.Logger logger
-        |
         |rule "hello" when
         |then
-        |  logger.info("HELLO WORLD");
+        |  insert("HELLO WORLD");
         |end
-        |
         |""".stripMargin
     val engine = DroolsEngine(drl)
     engine.fireAllRules()
+    engine.getObjects().headOption.value shouldBe "HELLO WORLD"
     engine.dispose()
   }
 
