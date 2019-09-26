@@ -23,17 +23,30 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
     engine.dispose()
   }
 
+
+  it should "support logging within defined kb" in {
+    val drl =
+      """package testdrools
+         |global org.slf4j.Logger logger
+         |rule "hello" when
+         |then
+         |  logger.info("Hello");
+         |  insert("HELLO WORLD");
+         |end
+         |""".stripMargin
+    val engine = DroolsEngine(drl)
+    engine.fireAllRules()
+    engine.getObjects().headOption.value shouldBe "HELLO WORLD"
+    engine.dispose()
+  }
+
   it should "react on an inserted message" in {
     val drl =
       """package testdrools
-        |
-        |global org.slf4j.Logger logger
-        |
         |rule "hello message"
         |when
         |  $msg:String()
         |then
-        |  logger.info("RECEIVED:"+$msg);
         |  insert(1);
         |end
         |

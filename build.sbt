@@ -1,10 +1,10 @@
 name := "drools-scripting"
-organization :="fr.janalyse"
+organization := "fr.janalyse"
 homepage := Some(new URL("https://github.com/dacr/drools-scripting"))
 
 
-scalaVersion := "2.13.0"
-crossScalaVersions := Seq("2.13.0", "2.12.10")
+scalaVersion := "2.13.1"
+crossScalaVersions := Seq(scalaVersion.value, "2.12.10")
 
 libraryDependencies ++= Seq(
   "org.drools" % "drools-core" % "7.26.0.Final",
@@ -27,8 +27,8 @@ publishTo := Some(if (isSnapshot.value) Opts.resolver.sonatypeSnapshots else Opt
 
 scmInfo := Some(ScmInfo(url(s"https://github.com/dacr/drools-scripting"), s"git@github.com:dacr/drools-scripting.git"))
 
-PgpKeys.useGpg in Global := true      // workaround with pgp and sbt 1.2.x
-pgpSecretRing := pgpPublicRing.value  // workaround with pgp and sbt 1.2.x
+PgpKeys.useGpg in Global := true // workaround with pgp and sbt 1.2.x
+pgpSecretRing := pgpPublicRing.value // workaround with pgp and sbt 1.2.x
 
 pomExtra in Global := {
   <developers>
@@ -42,6 +42,7 @@ pomExtra in Global := {
 
 
 import ReleaseTransformations._
+
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,

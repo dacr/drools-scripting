@@ -32,6 +32,14 @@ object DroolsEngine {
 }
 
 class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) extends RuntimeDrools {
+
+  val rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME).asInstanceOf[ch.qos.logback.classic.Logger]
+  if (config.withDroolsLogging) {
+    rootLogger.setLevel(ch.qos.logback.classic.Level.INFO)
+  } else {
+    rootLogger.setLevel(ch.qos.logback.classic.Level.ERROR)
+  }
+
   def getCurrentTime():Long = session.getSessionClock().asInstanceOf[SessionClock].getCurrentTime
   def delete(handle: FactHandle): Unit = session.delete(handle)
   def update(handle: FactHandle, that: AnyRef): Unit = session.update(handle, that)
