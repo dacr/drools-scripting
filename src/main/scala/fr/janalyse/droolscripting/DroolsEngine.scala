@@ -46,6 +46,7 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
   def getFactHandle(arrived: Any):FactHandle = session.getFactHandle(arrived)
   def insert(that: AnyRef): FactHandle = session.insert(that)
 
+  def insertJson(json: String): FactHandle = ???
 
   val ksessionName = "ksession1"
   def makeKModuleContent(config:DroolsEngineConfig): String = {
