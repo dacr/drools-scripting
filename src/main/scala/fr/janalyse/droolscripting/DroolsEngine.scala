@@ -46,7 +46,13 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
   def getFactHandle(arrived: Any):FactHandle = session.getFactHandle(arrived)
   def insert(that: AnyRef): FactHandle = session.insert(that)
 
-  def insertJson(json: String): FactHandle = ???
+  val genson = new com.owlike.genson.Genson()
+  def insertJson(json: String, typeInfo:String): FactHandle = {
+    val cl = container.getClassLoader
+    val clazz = cl.loadClass(typeInfo)
+    val result = genson.deserialize(json, clazz).asInstanceOf[Object]
+    insert(result)
+  }
 
   val ksessionName = "ksession1"
   def makeKModuleContent(config:DroolsEngineConfig): String = {
@@ -72,8 +78,8 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
   private val r1 = stringToDrlResource(drl, kbaseName+"/drl1.drl")
 
   private val module  = createAndDeployJar( services, kmoduleContent, releaseId, Seq(r1))
-  private val container = services.newKieContainer( module.getReleaseId())
-  private val session = container.newKieSession()
+  val container = services.newKieContainer( module.getReleaseId())
+  val session = container.newKieSession()
   services.getLoggers.newConsoleLogger(session)
   if ("""\s*global\s+org.slf4j.Logger\s*logger\s*""".r.findFirstIn(drl).isDefined) {
     session.setGlobal("logger", logger)

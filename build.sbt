@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-api" % "1.7.28",
   "org.scalatest" %% "scalatest" % "3.0.8" % "test",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
+  "com.owlike" % "genson" % "1.6"
 )
 
 pomIncludeRepository := { _ => false }
