@@ -7,13 +7,13 @@ scalaVersion := "2.13.1"
 crossScalaVersions := Seq(scalaVersion.value, "2.12.10")
 
 libraryDependencies ++= Seq(
-  "org.drools" % "drools-core" % "7.26.0.Final",
-  "org.drools" % "drools-compiler" % "7.26.0.Final",
-  "org.slf4j" % "slf4j-api" % "1.7.28",
-  "ch.qos.logback" % "logback-classic" % "1.2.3",
-  "com.owlike" % "genson" % "1.6",
-  "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.2",
-"org.scalatest" %% "scalatest" % "3.0.8" % "test",
+  "org.drools"               % "drools-core"             % "7.27.0.Final",
+  "org.drools"               % "drools-compiler"         % "7.27.0.Final",
+  "org.slf4j"                % "slf4j-api"               % "1.7.28",
+  "ch.qos.logback"           % "logback-classic"         % "1.2.3",
+  "com.owlike"               % "genson"                  % "1.6",
+  "org.scala-lang.modules"  %% "scala-collection-compat" % "2.1.2",
+  "org.scalatest"           %% "scalatest"               % "3.0.8" % "test",
 )
 
 pomIncludeRepository := { _ => false }
