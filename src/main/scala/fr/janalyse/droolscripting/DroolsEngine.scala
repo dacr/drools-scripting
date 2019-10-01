@@ -2,7 +2,7 @@ package fr.janalyse.droolscripting
 
 import org.slf4j._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 import org.kie.api._
 import org.kie.api.runtime.KieSession
@@ -72,7 +72,7 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
     createAndDeployJar( services, kmoduleContent, releaseId, Seq(r1))
   }
 
-  private val container = services.newKieContainer( module.getReleaseId())
+  private val container = services.newKieContainer( module.getReleaseId)
 
   val session: KieSession = container.newKieSession()
 
@@ -97,21 +97,21 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
 
   def getFields(declaredType:String):List[String] = {
     getFactType(declaredType).map { factType =>
-      factType.getFields().asScala.map(_.getName()).toList
+      factType.getFields.asScala.map(_.getName()).toList
     }.getOrElse(List.empty)
   }
 
-  def getCurrentTime():Long = {
+  def getCurrentTime:Long = {
     if (config.pseudoClock) {
-      session.getSessionClock().asInstanceOf[SessionPseudoClock].getCurrentTime()
+      session.getSessionClock.asInstanceOf[SessionPseudoClock].getCurrentTime
     } else {
-      session.getSessionClock().asInstanceOf[SessionClock].getCurrentTime()
+      session.getSessionClock.asInstanceOf[SessionClock].getCurrentTime
     }
   }
 
   def timeShiftInSeconds(seconds:Int):Unit = {
     if (config.pseudoClock) {
-      val pseudoClock = session.getSessionClock().asInstanceOf[SessionPseudoClock]
+      val pseudoClock = session.getSessionClock.asInstanceOf[SessionPseudoClock]
       pseudoClock.advanceTime(seconds, java.util.concurrent.TimeUnit.SECONDS)
     } else {
       val msg = "time shift can only work with pseudo clock, check your configuration"
@@ -137,10 +137,10 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
 
   def fireUntilHalt(): Unit = session.fireUntilHalt()
 
-  def getObjects():Iterable[Any] = session.getObjects().asScala
+  def getObjects:Iterable[Any] = session.getObjects().asScala
 
   def getModelInstances(declaredType:String):Iterable[Any]={
-    getObjects().filter(_.getClass().getCanonicalName == declaredType)
+    getObjects.filter(_.getClass.getCanonicalName == declaredType)
   }
 
   def getModelInstanceAttribute(instance:Any, attributeName:String):Option[Object] = {

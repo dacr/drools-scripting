@@ -21,7 +21,7 @@ class DroolsEngineJsonTest extends FlatSpec with Matchers {
     val engine = DroolsEngine(drl)
     engine.insertJson("""{"name":"John"}""", "testdrools.Someone")
     engine.fireAllRules()
-    engine.getObjects().find(_.isInstanceOf[String]).value shouldBe "Hello John"
+    engine.getObjects.find(_.isInstanceOf[String]).value shouldBe "Hello John"
     engine.getModelFirstInstance("testdrools.Someone")
     engine.dispose()
   }
@@ -65,7 +65,7 @@ class DroolsEngineJsonTest extends FlatSpec with Matchers {
         |""".stripMargin
     engine.insertJson(json, "testdrools.Someone")
     engine.fireAllRules()
-    engine.getObjects().find(_.isInstanceOf[String]).value shouldBe "Hello John 2 France"
+    engine.getObjects.find(_.isInstanceOf[String]).value shouldBe "Hello John 2 France"
     engine.dispose()
   }
 }

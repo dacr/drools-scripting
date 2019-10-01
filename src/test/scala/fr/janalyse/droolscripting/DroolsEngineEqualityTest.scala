@@ -1,12 +1,8 @@
 package fr.janalyse.droolscripting
 
-import java.util.Date
-
 import fr.janalyse.droolscripting.DroolsEngineConfig._
 import org.scalatest.OptionValues._
 import org.scalatest._
-
-import scala.collection.JavaConverters._
 
 class DroolsEngineEqualityTest extends FlatSpec with Matchers {
 
@@ -52,7 +48,7 @@ class DroolsEngineEqualityTest extends FlatSpec with Matchers {
         |""".stripMargin
     val engine = DroolsEngine(drl, configWithEquality)
     engine.fireAllRules()
-    engine.getObjects().size shouldBe 2
+    engine.getObjects.size shouldBe 2
     engine.dispose()
   }
 
@@ -85,7 +81,7 @@ class DroolsEngineEqualityTest extends FlatSpec with Matchers {
         |""".stripMargin
     val engine = DroolsEngine(drl, configWithEquality)
     engine.fireAllRules()
-    engine.getObjects().size shouldBe 1
+    engine.getObjects.size shouldBe 1
     engine.getModelFirstInstanceAttribute("testdrools.Identity", "age").value shouldBe 42 // :(
     engine.dispose()
   }
@@ -121,7 +117,7 @@ class DroolsEngineEqualityTest extends FlatSpec with Matchers {
         |""".stripMargin
     val engine = DroolsEngine(drl,configWithEquality)
     engine.fireAllRules()
-    engine.getObjects().size shouldBe 1
+    engine.getObjects.size shouldBe 1
     engine.dispose()
   }
 
@@ -158,10 +154,10 @@ class DroolsEngineEqualityTest extends FlatSpec with Matchers {
         |""".stripMargin
     val engine = DroolsEngine(drl, configWithEquality)
     engine.fireAllRules()
-    engine.getObjects().size shouldBe 3
+    engine.getObjects.size shouldBe 3
     engine.timeShiftInSeconds(5)
     engine.fireAllRules()
-    engine.getObjects().size shouldBe 1
+    engine.getObjects.size shouldBe 1
     engine.dispose()
   }
 
