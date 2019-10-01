@@ -26,3 +26,38 @@ object HelloTest extends FlatSpec with Matchers {
 }
 HelloTest.execute()
 ```
+
+or an other one :
+
+```scala
+import $ivy.`fr.janalyse::drools-scripting:1.0.1`, $ivy.`org.scalatest::scalatest:3.0.8`
+import fr.janalyse.droolscripting._, org.scalatest._, org.scalatest.OptionValues._
+
+object HelloTest extends FlatSpec with Matchers {
+  "Drools" should "say hello" in {
+    val drl =
+      """package test
+        |
+        |declare Someone
+        |  name:String
+        |end
+        |
+        |declare Message
+        |  message:String
+        |end
+        |
+        |rule "hello" when
+        |  Someone($name:name)
+        |then
+        |  insert(new Message("HELLO "+$name));
+        |end
+        |""".stripMargin
+    val engine = DroolsEngine(drl)
+    engine.insertJson("""{"name":"John"}""","test.Someone")
+    engine.fireAllRules()
+    val msgOption = engine.getModelFirstInstanceAttribute("test.Message", "message")
+    msgOption.value shouldBe "HELLO John"
+  }
+}
+HelloTest.execute()
+```
