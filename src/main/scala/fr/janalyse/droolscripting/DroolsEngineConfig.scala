@@ -10,4 +10,6 @@ case class DroolsEngineConfig(
   equalsWithIdentity:Boolean=false,
   pseudoClock:Boolean=true,
   withDroolsLogging:Boolean = false
-)
+) {
+  val ksessionName = "ksession1"
+}
