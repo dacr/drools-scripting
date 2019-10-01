@@ -18,7 +18,7 @@ trait RuntimeDrools {
     val kfs = ks.newKieFileSystem.generateAndWritePomXML(releaseId).writeKModuleXML(kModuleContent)
     for { resource <- drlResources } { kfs.write(resource) }
     val kb = ks.newKieBuilder(kfs).buildAll
-    assert(kb.getResults.hasMessages(Message.Level.ERROR) == false, kb.getResults.getMessages(Message.Level.ERROR).toString)
+    assert(!kb.getResults.hasMessages(Message.Level.ERROR), kb.getResults.getMessages(Message.Level.ERROR).toString)
     ks.getRepository.getKieModule(releaseId).asInstanceOf[InternalKieModule].getBytes
   }
   def deployJarIntoRepository(ks: KieServices, jar: Array[Byte]):KieModule = {

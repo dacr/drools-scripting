@@ -52,7 +52,7 @@ class DroolsEngineEqualityTest extends FlatSpec with Matchers {
         |""".stripMargin
     val engine = DroolsEngine(drl, configWithEquality)
     engine.fireAllRules()
-    engine.getObjects().size shouldBe(2)
+    engine.getObjects().size shouldBe 2
     engine.dispose()
   }
 
@@ -85,7 +85,7 @@ class DroolsEngineEqualityTest extends FlatSpec with Matchers {
         |""".stripMargin
     val engine = DroolsEngine(drl, configWithEquality)
     engine.fireAllRules()
-    engine.getObjects().size shouldBe(1)
+    engine.getObjects().size shouldBe 1
     engine.getModelFirstInstanceAttribute("testdrools.Identity", "age").value shouldBe 42 // :(
     engine.dispose()
   }
@@ -121,7 +121,7 @@ class DroolsEngineEqualityTest extends FlatSpec with Matchers {
         |""".stripMargin
     val engine = DroolsEngine(drl,configWithEquality)
     engine.fireAllRules()
-    engine.getObjects().size shouldBe(1)
+    engine.getObjects().size shouldBe 1
     engine.dispose()
   }
 
@@ -158,10 +158,10 @@ class DroolsEngineEqualityTest extends FlatSpec with Matchers {
         |""".stripMargin
     val engine = DroolsEngine(drl, configWithEquality)
     engine.fireAllRules()
-    engine.getObjects().size shouldBe(3)
+    engine.getObjects().size shouldBe 3
     engine.timeShiftInSeconds(5)
     engine.fireAllRules()
-    engine.getObjects().size shouldBe(1)
+    engine.getObjects().size shouldBe 1
     engine.dispose()
   }
 

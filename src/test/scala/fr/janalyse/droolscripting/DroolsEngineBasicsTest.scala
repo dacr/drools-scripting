@@ -54,7 +54,7 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
     val engine = DroolsEngine(drl)
     engine.insert("some message")
     engine.fireAllRules()
-    engine.getObjects().size shouldBe (2)
+    engine.getObjects().size shouldBe 2
     engine.dispose()
   }
 
@@ -88,10 +88,10 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
         |""".stripMargin
     val engine = DroolsEngine(drl)
     engine.fireAllRules()
-    engine.getObjects().size shouldBe(1)
+    engine.getObjects().size shouldBe 1
     engine.timeShiftInSeconds(5)
     engine.fireAllRules()
-    engine.getObjects().size shouldBe(0)
+    engine.getObjects().size shouldBe 0
     engine.dispose()
   }
 
@@ -148,7 +148,7 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
     info(s"initialDate = $initialDate")
     info(s"currentDate = $currentDate")
     note("Pseudo clock starts to 0")
-    engine.getObjects().size shouldBe(1)
+    engine.getObjects().size shouldBe 1
 
 
     for {
@@ -169,21 +169,21 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
 
     engine.timeShiftInSeconds(5) // t+5s
     engine.fireAllRules()
-    engine.getObjects().size shouldBe(1)
+    engine.getObjects().size shouldBe 1
 
     engine.timeShiftInSeconds(4) // t+9s
     engine.fireAllRules()
-    engine.getObjects().size shouldBe(1)
+    engine.getObjects().size shouldBe 1
 
     engine.timeShiftInSeconds(3) // t+12s
     engine.fireAllRules()
-    engine.getObjects().size shouldBe(0) // original datetime and expiration occurs !!!
+    engine.getObjects().size shouldBe 0 // original datetime and expiration occurs !!!
     info("original datetime and expiration occurs, any change is not taken into account")
     info("event are considerated as immutable !!")
 
     engine.timeShiftInSeconds(13) // t+25s
     engine.fireAllRules()
-    engine.getObjects().size shouldBe(0)
+    engine.getObjects().size shouldBe 0
 
     engine.dispose()
   }
@@ -208,7 +208,7 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
     val engine = DroolsEngine(drl)
     engine.fireAllRules()
     val instances = engine.getModelInstances("testdrools.Message")
-    instances should have size(1)
+    instances should have size 1
     engine.getModelInstanceAttribute(instances.head, "content").value shouldBe "Hello World"
     engine.getModelFirstInstanceAttribute("testdrools.Message", "content").value shouldBe "Hello World"
   }
@@ -256,7 +256,7 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
     val engine = DroolsEngine(drl)
     engine.fireAllRules()
     val instances = engine.getModelInstances("testdrools.AllMessages")
-    instances should have size(1)
+    instances should have size 1
     engine
       .getModelFirstInstanceAttribute("testdrools.AllMessages", "all")
       .value
@@ -314,14 +314,14 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
     val engine = DroolsEngine(drl,configWithIdentity)
 
     engine.fireAllRules()
-    engine.getModelInstances("testdrools.Something") should have size(1)
-    engine.getModelInstances("testdrools.Flag") should have size(1)
+    engine.getModelInstances("testdrools.Something") should have size 1
+    engine.getModelInstances("testdrools.Flag") should have size 1
     engine.getModelFirstInstanceAttribute("testdrools.Something", "content") shouldBe Some("found-42")
 
     engine.insert("update")
     engine.fireAllRules()
-    engine.getModelInstances("testdrools.Something") should have size(1)
-    engine.getModelInstances("testdrools.Flag") should have size(2)
+    engine.getModelInstances("testdrools.Something") should have size 1
+    engine.getModelInstances("testdrools.Flag") should have size 2
     engine.getModelFirstInstanceAttribute("testdrools.Something", "content") shouldBe Some("found-42")
 
     info("As Something is logically inserted, it is removed on updateThat and then reinserted.")
@@ -361,7 +361,7 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
     engine.fireAllRules()
 
     note("Pseudo clock starts to 0")
-    engine.getObjects().size shouldBe(0)
+    engine.getObjects().size shouldBe 0
 
     def makeArrived(name:String, whenSeconds:Int):Object = {
       val factType = engine.getFactType("testdrools.ArrivedInput").get
@@ -376,26 +376,25 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
 
     engine.timeShiftInSeconds(5) // t+5s
     engine.fireAllRules()
-    engine.getObjects().size shouldBe(2)
+    engine.getObjects().size shouldBe 2
 
 
     engine.timeShiftInSeconds(4) // t+9s
     engine.fireAllRules()
-    engine.getObjects().size shouldBe(2)
+    engine.getObjects().size shouldBe 2
 
     info("DELETE AND THEN INSERT WITH UPDATED TIMESTAMP")
     engine.delete(handle0)
     val arrived1 = makeArrived("John Doe", 5)
-    val handle1 = engine.insert(arrived1)
     info(arrived1.toString)
 
     engine.timeShiftInSeconds(3) // t+12s
     engine.fireAllRules()
-    engine.getObjects().size shouldBe(2) // Arrived retracted and then reinserted with a new timestamp so no expiration
+    engine.getObjects().size shouldBe 2 // Arrived retracted and then reinserted with a new timestamp so no expiration
 
     engine.timeShiftInSeconds(20) // t+32s
     engine.fireAllRules()
-    engine.getObjects().size shouldBe(0) // expiration occurs on the newest arrived event !!!
+    engine.getObjects().size shouldBe 0 // expiration occurs on the newest arrived event !!!
 
 
     engine.dispose()

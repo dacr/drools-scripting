@@ -13,6 +13,7 @@ import org.kie.internal.io.ResourceFactory
 import org.kie.api.definition.`type`.FactType
 import java.util.Date
 
+import ch.qos.logback.classic
 import org.drools.compiler.kie.builder.impl.InternalKieModule
 import org.kie.api.runtime.rule.FactHandle
 
@@ -37,7 +38,7 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
 
   val genson = new com.owlike.genson.Genson()
 
-  val rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME).asInstanceOf[ch.qos.logback.classic.Logger]
+  val rootLogger: ch.qos.logback.classic.Logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME).asInstanceOf[ch.qos.logback.classic.Logger]
   if (config.withDroolsLogging) {
     rootLogger.setLevel(ch.qos.logback.classic.Level.INFO)
   } else {
@@ -58,7 +59,7 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
 
 
 
-  val services = KieServices.Factory.get
+  val services: KieServices = KieServices.Factory.get
 
   private val module  = {
     val kmoduleContent = makeKModuleContent(config)
@@ -73,7 +74,7 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
 
   private val container = services.newKieContainer( module.getReleaseId())
 
-  val session = container.newKieSession()
+  val session: KieSession = container.newKieSession()
 
   services.getLoggers.newConsoleLogger(session)
   if ("""\s*global\s+org.slf4j.Logger\s*logger\s*""".r.findFirstIn(drl).isDefined) {
@@ -82,7 +83,7 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
 
   // ===========================================================================
 
-  def dispose() = {
+  def dispose(): Unit = {
     session.dispose()
     container.dispose()
   }

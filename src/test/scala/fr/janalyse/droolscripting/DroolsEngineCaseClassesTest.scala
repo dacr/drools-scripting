@@ -15,8 +15,8 @@ case class Dummy(name: String, value: Int)
 class DroolsEngineCaseClassesTest extends FlatSpec with Matchers {
 
   "drools" should "manage right regular case classes, but unfortunately not those created from ammonite" in {
-    info(new namespace1.namespace2.DummyX("truc", 42).getClass.getName)
-    info(new Dummy("truc", 42).getClass.getName)
+    info(namespace1.namespace2.DummyX("truc", 42).getClass.getName)
+    info(Dummy("truc", 42).getClass.getName)
     val drl =
       """package testdrools
         |
