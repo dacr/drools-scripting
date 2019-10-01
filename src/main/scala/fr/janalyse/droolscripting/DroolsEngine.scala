@@ -34,7 +34,6 @@ object DroolsEngine {
 
 class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) extends RuntimeDrools {
   private val logger = org.slf4j.LoggerFactory.getLogger("DroolsEngine")
-  logger.info(s"STARTING $kbaseName")
 
   val genson = new com.owlike.genson.Genson()
 
@@ -47,11 +46,22 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
 
   def makeKModuleContent(config:DroolsEngineConfig): String = {
     val equalsBehavior = if (config.equalsWithIdentity) "identity" else "equality"
+    val eventProcessingMode = config.eventProcessingMode match {
+      case StreamMode => "stream"
+      case CloudMode => "cloud"
+    }
+    val sessionName = config.ksessionName
     val clockKind = if (config.pseudoClock) "pseudo" else ""
     s"""<kmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        |         xmlns="http://www.drools.org/xsd/kmodule">
-       |  <kbase name="$kbaseName" default="true" eventProcessingMode="stream" equalsBehavior="$equalsBehavior">
-       |     <ksession name="${config.ksessionName}" type="stateful" default="true" clockType="$clockKind"/>
+       |  <kbase name="$kbaseName"
+       |         default="true"
+       |         eventProcessingMode="$eventProcessingMode"
+       |         equalsBehavior="$equalsBehavior">
+       |     <ksession name="$sessionName"
+       |               type="stateful"
+       |               default="true"
+       |               clockType="$clockKind"/>
        |  </kbase>
        |</kmodule>
        |""".stripMargin
@@ -152,7 +162,9 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
     }.toOption
   }
 
-  def getModelFirstInstance(declaredType:String):Option[Any] = getModelInstances(declaredType).headOption
+  def getModelFirstInstance(declaredType:String):Option[Any] = {
+    getModelInstances(declaredType).headOption
+  }
 
   def getModelFirstInstanceAttribute(declaredType:String, attributeName:String):Option[Object] = {
     getModelFirstInstance(declaredType).flatMap{instance =>
