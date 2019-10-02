@@ -150,7 +150,8 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
   def getObjects:Iterable[Any] = session.getObjects().asScala
 
   def getModelInstances(declaredType:String):Iterable[Any]={
-    getObjects.filter(_.getClass.getCanonicalName == declaredType)
+    val declaredTypeClass = container.getClassLoader.loadClass(declaredType)
+    getObjects.filter(ob => declaredTypeClass.isAssignableFrom( ob.getClass ))
   }
 
   def getModelInstanceAttribute(instance:Any, attributeName:String):Option[Object] = {

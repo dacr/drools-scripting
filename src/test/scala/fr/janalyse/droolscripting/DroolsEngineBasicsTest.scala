@@ -40,6 +40,67 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
     engine.dispose()
   }
 
+  it should "be possible to get objects" in {
+    val drl=
+      """package test
+        |declare Top
+        |  age:int
+        |end
+        |
+        |rule "init"
+        |when
+        |then
+        |  insert(new Top(42));
+        |  insert(new Top(24));
+        |end
+        |""".stripMargin
+    val engine = DroolsEngine(drl)
+    engine.fireAllRules()
+    engine.getObjects.size shouldBe  2
+  }
+
+  it should "be possible to get object by their types" in {
+    val drl=
+      """package test
+        |declare Top
+        |  age:int
+        |end
+        |
+        |rule "init"
+        |when
+        |then
+        |  insert(new Top(42));
+        |  insert(new Top(24));
+        |end
+        |""".stripMargin
+    val engine = DroolsEngine(drl)
+    engine.fireAllRules()
+    engine.getModelInstances("test.Top").size shouldBe  2
+  }
+
+  it should "be possible to get object by their super types" in {
+    val drl=
+      """package test
+        |declare Top
+        |  age:int
+        |end
+        |
+        |declare Bottom extends Top end
+        |
+        |rule "init"
+        |when
+        |then
+        |  insert(new Bottom(42));
+        |  insert(new Bottom(24));
+        |end
+        |""".stripMargin
+    val engine = DroolsEngine(drl)
+    engine.fireAllRules()
+    engine.getModelInstances("test.Top").size shouldBe  2
+  }
+
+
+
   it should "react on an inserted message" in {
     val drl =
       """package testdrools
