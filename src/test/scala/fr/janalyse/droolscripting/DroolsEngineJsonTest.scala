@@ -68,4 +68,43 @@ class DroolsEngineJsonTest extends FlatSpec with Matchers {
     engine.getObjects.find(_.isInstanceOf[String]).value shouldBe "Hello John 2 France"
     engine.dispose()
   }
+
+  it should "be able to deal with ISO8601 json dates" in {
+    val drl=
+      """package test
+        |import java.util.Date
+        |declare Someone
+        |  name:String
+        |  birth:Date
+        |end
+        |""".stripMargin
+    val engine = DroolsEngine(drl)
+    engine.insertJson("""{"name":"joe", "birth":"2019-01-01T14:00:00Z""}""", "test.Someone")
+    engine.fireAllRules()
+    val people = engine.getModelInstances("test.Someone")
+    info(people.mkString(","))
+    people should have size(1)
+  }
+
+  it should "be able to use enumerations" in {
+    val drl=
+      """package test
+        |
+        |declare enum Priority LOW(0), MEDIUM(1), HIGH(2);
+        |  value: int
+        |end
+        |
+        |declare enum Color RED("red"), GREEN("green"), BLUE("blue");
+        |  name: String
+        |end
+        |""".stripMargin
+    val engine = DroolsEngine(drl)
+    engine.insertJson("""{"value":1}""", "test.Priority")
+    engine.insertJson("""{"name":"red"}""", "test.Color")
+    engine.fireAllRules()
+    val enums = engine.getObjects
+    info(enums.mkString(","))
+    enums should have size(2)
+  }
+
 }
