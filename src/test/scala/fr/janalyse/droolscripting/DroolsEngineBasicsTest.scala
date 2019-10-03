@@ -109,7 +109,7 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
     val engine = DroolsEngine(drl)
     engine.fireAllRules()
     val strings = engine.getModelInstances("java.lang.String")
-    strings should have size(1)
+    strings should have size 1
     strings.headOption.value shouldBe "Cool Raoul"
   }
 
