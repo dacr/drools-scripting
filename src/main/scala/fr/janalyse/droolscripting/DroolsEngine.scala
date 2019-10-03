@@ -1,5 +1,8 @@
 package fr.janalyse.droolscripting
 
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+
 import org.slf4j._
 
 import scala.jdk.CollectionConverters._
@@ -14,28 +17,38 @@ import org.kie.api.definition.`type`.FactType
 import java.util.Date
 
 import ch.qos.logback.classic
+import com.owlike.genson.GensonBuilder
 import org.drools.compiler.kie.builder.impl.InternalKieModule
 import org.kie.api.runtime.rule.FactHandle
 
 object DroolsEngine {
-  def apply(drl:String): DroolsEngine = {
+  def apply(drl: String): DroolsEngine = {
     new DroolsEngine("kbase1", drl, new DroolsEngineConfig())
   }
-  def apply(drl:String, config: DroolsEngineConfig): DroolsEngine = {
+
+  def apply(drl: String, config: DroolsEngineConfig): DroolsEngine = {
     new DroolsEngine("kbase1", drl, config)
   }
-  def apply(kbaseName:String, drl:String): DroolsEngine = {
+
+  def apply(kbaseName: String, drl: String): DroolsEngine = {
     new DroolsEngine(kbaseName, drl, new DroolsEngineConfig())
   }
-  def apply(kbaseName:String, drl:String, config: DroolsEngineConfig): DroolsEngine = {
+
+  def apply(kbaseName: String, drl: String, config: DroolsEngineConfig): DroolsEngine = {
     new DroolsEngine(kbaseName, drl, config)
   }
 }
 
-class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) extends RuntimeDrools {
+class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) extends RuntimeDrools {
   private val logger = org.slf4j.LoggerFactory.getLogger("DroolsEngine")
 
-  val genson = new com.owlike.genson.Genson()
+  //val genson = new com.owlike.genson.Genson()
+  private val genson =
+    new GensonBuilder()
+      .useDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+      .setSkipNull(true)
+      .useConstructorWithArguments(true)
+      .create()
 
   val rootLogger: ch.qos.logback.classic.Logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME).asInstanceOf[ch.qos.logback.classic.Logger]
   if (config.withDroolsLogging) {
@@ -44,7 +57,7 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
     rootLogger.setLevel(ch.qos.logback.classic.Level.ERROR)
   }
 
-  def makeKModuleContent(config:DroolsEngineConfig): String = {
+  def makeKModuleContent(config: DroolsEngineConfig): String = {
     val equalsBehavior = if (config.equalsWithIdentity) "identity" else "equality"
     val eventProcessingMode = config.eventProcessingMode match {
       case StreamMode => "stream"
@@ -68,21 +81,20 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
   }
 
 
-
   val services: KieServices = KieServices.Factory.get
 
-  private val module  = {
+  private val module = {
     val kmoduleContent = makeKModuleContent(config)
     val uuid = java.util.UUID.randomUUID()
     val releaseId = services.newReleaseId(
       "fr.janalyse",
-      "playing-with-drools-"+uuid,
-      "1.0.0" )
-    val r1 = stringToDrlResource(drl, kbaseName+"/drl1.drl")
-    createAndDeployJar( services, kmoduleContent, releaseId, Seq(r1))
+      "playing-with-drools-" + uuid,
+      "1.0.0")
+    val r1 = stringToDrlResource(drl, kbaseName + "/drl1.drl")
+    createAndDeployJar(services, kmoduleContent, releaseId, Seq(r1))
   }
 
-  private val container = services.newKieContainer( module.getReleaseId)
+  private val container = services.newKieContainer(module.getReleaseId)
 
   val session: KieSession = container.newKieSession()
 
@@ -98,20 +110,20 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
     container.dispose()
   }
 
-  def getFactHandle(arrived: Any):FactHandle = session.getFactHandle(arrived)
+  def getFactHandle(arrived: Any): FactHandle = session.getFactHandle(arrived)
 
-  def getFactType(declaredType:String):Option[FactType] = {
+  def getFactType(declaredType: String): Option[FactType] = {
     val Array(drlPackage, drlClassName) = declaredType.split("[.](?=[^.]*$)", 2)
     Option(session.getKieBase.getFactType(drlPackage, drlClassName))
   }
 
-  def getFields(declaredType:String):List[String] = {
+  def getFields(declaredType: String): List[String] = {
     getFactType(declaredType).map { factType =>
       factType.getFields.asScala.map(_.getName()).toList
     }.getOrElse(List.empty)
   }
 
-  def getCurrentTime:Long = {
+  def getCurrentTime: Long = {
     if (config.pseudoClock) {
       session.getSessionClock.asInstanceOf[SessionPseudoClock].getCurrentTime
     } else {
@@ -119,7 +131,7 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
     }
   }
 
-  def timeShiftInSeconds(seconds:Int):Unit = {
+  def timeShiftInSeconds(seconds: Int): Unit = {
     if (config.pseudoClock) {
       val pseudoClock = session.getSessionClock.asInstanceOf[SessionPseudoClock]
       pseudoClock.advanceTime(seconds, java.util.concurrent.TimeUnit.SECONDS)
@@ -136,7 +148,7 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
 
   def insert(that: AnyRef): FactHandle = session.insert(that)
 
-  def insertJson(json: String, typeInfo:String): FactHandle = {
+  def insertJson(json: String, typeInfo: String): FactHandle = {
     val cl = container.getClassLoader
     val clazz = cl.loadClass(typeInfo)
     val result = genson.deserialize(json, clazz).asInstanceOf[Object]
@@ -147,14 +159,14 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
 
   def fireUntilHalt(): Unit = session.fireUntilHalt()
 
-  def getObjects:Iterable[Any] = session.getObjects().asScala
+  def getObjects: Iterable[Any] = session.getObjects().asScala
 
-  def getModelInstances(declaredType:String):Iterable[Any]={
+  def getModelInstances(declaredType: String): Iterable[Any] = {
     val declaredTypeClass = container.getClassLoader.loadClass(declaredType)
-    getObjects.filter(ob => declaredTypeClass.isAssignableFrom( ob.getClass ))
+    getObjects.filter(ob => declaredTypeClass.isAssignableFrom(ob.getClass))
   }
 
-  def getModelInstanceAttribute(instance:Any, attributeName:String):Option[Object] = {
+  def getModelInstanceAttribute(instance: Any, attributeName: String): Option[Object] = {
     Try {
       val declaredType = instance.getClass.getCanonicalName
       val Array(drlPackage, drlClassName) = declaredType.split("[.](?=[^.]*$)", 2)
@@ -163,12 +175,12 @@ class DroolsEngine(kbaseName:String, drl: String, config: DroolsEngineConfig) ex
     }.toOption
   }
 
-  def getModelFirstInstance(declaredType:String):Option[Any] = {
+  def getModelFirstInstance(declaredType: String): Option[Any] = {
     getModelInstances(declaredType).headOption
   }
 
-  def getModelFirstInstanceAttribute(declaredType:String, attributeName:String):Option[Object] = {
-    getModelFirstInstance(declaredType).flatMap{instance =>
+  def getModelFirstInstanceAttribute(declaredType: String, attributeName: String): Option[Object] = {
+    getModelFirstInstance(declaredType).flatMap { instance =>
       getModelInstanceAttribute(instance, attributeName)
     }
   }

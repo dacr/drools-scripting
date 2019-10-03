@@ -79,11 +79,11 @@ class DroolsEngineJsonTest extends FlatSpec with Matchers {
         |end
         |""".stripMargin
     val engine = DroolsEngine(drl)
-    engine.insertJson("""{"name":"joe", "birth":"2019-01-01T14:00:00Z""}""", "test.Someone")
+    engine.insertJson("""{"name":"joe", "birth":"2019-01-01T14:00:00Z"}""", "test.Someone")
     engine.fireAllRules()
     val people = engine.getModelInstances("test.Someone")
     info(people.mkString(","))
-    people should have size(1)
+    people should have size 1
   }
 
   it should "be able to use enumerations" in {
@@ -97,14 +97,20 @@ class DroolsEngineJsonTest extends FlatSpec with Matchers {
         |declare enum Color RED("red"), GREEN("green"), BLUE("blue");
         |  name: String
         |end
+        |
+        |declare Combo
+        |  priority:Priority
+        |  color:Color
+        |end
         |""".stripMargin
     val engine = DroolsEngine(drl)
-    engine.insertJson("""{"value":1}""", "test.Priority")
-    engine.insertJson("""{"name":"red"}""", "test.Color")
+    engine.insertJson("""LOW""", "test.Priority")
+    engine.insertJson("""RED""", "test.Color")
+    engine.insertJson("""{"priority":"LOW", "color":"GREEN"}""", "test.Combo")
     engine.fireAllRules()
-    val enums = engine.getObjects
-    info(enums.mkString(","))
-    enums should have size(2)
+    engine.getObjects should have size 3
+    val combo = engine.getModelInstances("test.Combo").headOption.value
+    combo.toString should include regex "LOW.*GREEN"
   }
 
 }
