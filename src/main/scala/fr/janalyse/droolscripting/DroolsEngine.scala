@@ -42,7 +42,6 @@ object DroolsEngine {
 class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) extends RuntimeDrools {
   private val logger = org.slf4j.LoggerFactory.getLogger("DroolsEngine")
 
-  //val genson = new com.owlike.genson.Genson()
   private val genson =
     new GensonBuilder()
       .useDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"))
@@ -50,11 +49,13 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
       .useConstructorWithArguments(true)
       .create()
 
-  val rootLogger: ch.qos.logback.classic.Logger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME).asInstanceOf[ch.qos.logback.classic.Logger]
-  if (config.withDroolsLogging) {
-    rootLogger.setLevel(ch.qos.logback.classic.Level.INFO)
-  } else {
-    rootLogger.setLevel(ch.qos.logback.classic.Level.ERROR)
+  LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) match {
+    case rootLogger: ch.qos.logback.classic.Logger if config.withDroolsLogging =>
+      rootLogger.setLevel(ch.qos.logback.classic.Level.INFO)
+    case rootLogger: ch.qos.logback.classic.Logger =>
+      rootLogger.setLevel(ch.qos.logback.classic.Level.ERROR)
+    case rootLogger =>
+      logger.warn(s"Couldn't automically configure log levels for ${rootLogger.getClass.getCanonicalName} logger")
   }
 
   def makeKModuleContent(config: DroolsEngineConfig): String = {

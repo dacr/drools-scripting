@@ -4,7 +4,9 @@ homepage := Some(new URL("https://github.com/dacr/drools-scripting"))
 
 
 scalaVersion := "2.13.1"
-crossScalaVersions := Seq(scalaVersion.value, "2.12.10")
+crossScalaVersions := Seq(scalaVersion.value, "2.12.10", "2.11.12")
+
+Test / fork := true  // Required to avoid "logger conflict" between sbt and code tests
 
 libraryDependencies ++= Seq(
   "org.drools"               % "drools-core"             % "7.27.0.Final",
