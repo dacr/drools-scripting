@@ -113,6 +113,18 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
     strings.headOption.value shouldBe "Cool Raoul"
   }
 
+  it should "be possible to get easily java Strings from working memory" in {
+    val drl=
+      """package test
+        |rule "init" when then
+        |  insert("Cool Raoul");
+        |end
+        |""".stripMargin
+    val engine = DroolsEngine(drl)
+    engine.fireAllRules()
+    engine.getStrings() shouldBe List("Cool Raoul")
+  }
+
 
   it should "react on an inserted message" in {
     val drl =

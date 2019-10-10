@@ -194,7 +194,7 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
   }
 
   def getStrings():List[String] = {
-    getModelInstances("java.lang.String").collect {
+    getModelInstances("java.lang.String").toList.collect {
       case str:String => str
     }
   }
