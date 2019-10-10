@@ -41,9 +41,11 @@ object DroolsEngine {
 class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) extends RuntimeDrools {
   private val logger = org.slf4j.LoggerFactory.getLogger("DroolsEngine")
 
+  val dateFormatPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+
   private val genson =
     new GensonBuilder()
-      .useDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+      .useDateFormat(new SimpleDateFormat(dateFormatPattern))
       .setSkipNull(true)
       .useConstructorWithArguments(true)
       .create()
