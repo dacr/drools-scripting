@@ -1,7 +1,4 @@
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.9")
-
-
-resolvers += "jgit-repo" at "http://download.eclipse.org/jgit/maven"
+resolvers += "jgit-repo" at "https://download.eclipse.org/jgit/maven"
 
 addSbtPlugin("com.eed3si9n"       %   "sbt-unidoc"              % "0.4.2")
 addSbtPlugin("com.github.gseitz"  %   "sbt-release"             % "1.0.11")

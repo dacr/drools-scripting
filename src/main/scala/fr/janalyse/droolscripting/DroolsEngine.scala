@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 
 import org.slf4j._
-
 import scala.jdk.CollectionConverters._
 import scala.util.Try
 import org.kie.api._
@@ -15,8 +14,8 @@ import org.kie.api.time.{SessionClock, SessionPseudoClock}
 import org.kie.internal.io.ResourceFactory
 import org.kie.api.definition.`type`.FactType
 import java.util.Date
+import java.util.concurrent.TimeUnit
 
-import ch.qos.logback.classic
 import com.owlike.genson.GensonBuilder
 import org.drools.compiler.kie.builder.impl.InternalKieModule
 import org.kie.api.runtime.rule.FactHandle
@@ -132,10 +131,18 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
     }
   }
 
-  def timeShiftInSeconds(seconds: Int): Unit = {
+  def timeShiftInSeconds(seconds: Int): Unit = advanceTime(seconds, TimeUnit.SECONDS)
+
+  def advanceTimeMillis(millis: Int): Unit = advanceTime(millis, TimeUnit.MILLISECONDS)
+  def advanceTimeSeconds(seconds: Int): Unit = advanceTime(seconds, TimeUnit.SECONDS)
+  def advanceTimeMinutes(minutes: Int): Unit = advanceTime(minutes, TimeUnit.MINUTES)
+  def advanceTimeHours(hours: Int): Unit = advanceTime(hours, TimeUnit.HOURS)
+  def advanceTimeDays(days: Int): Unit = advanceTime(days, TimeUnit.DAYS)
+
+  def advanceTime(seconds: Int, timeUnit: TimeUnit = TimeUnit.SECONDS): Unit = {
     if (config.pseudoClock) {
       val pseudoClock = session.getSessionClock.asInstanceOf[SessionPseudoClock]
-      pseudoClock.advanceTime(seconds, java.util.concurrent.TimeUnit.SECONDS)
+      pseudoClock.advanceTime(seconds, timeUnit)
     } else {
       val msg = "time shift can only work with pseudo clock, check your configuration"
       logger.warn(msg)
@@ -186,4 +193,9 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
     }
   }
 
+  def getStrings():List[String] = {
+    getModelInstances("java.lang.String").collect {
+      case str:String => str
+    }
+  }
 }
