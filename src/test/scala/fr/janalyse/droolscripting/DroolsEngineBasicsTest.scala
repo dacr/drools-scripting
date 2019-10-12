@@ -27,13 +27,13 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
   it should "support logging within defined kb" in {
     val drl =
       """package testdrools
-         |global org.slf4j.Logger logger
-         |rule "hello" when
-         |then
-         |  logger.info("Hello");
-         |  insert("HELLO WORLD");
-         |end
-         |""".stripMargin
+        |global org.slf4j.Logger logger
+        |rule "hello" when
+        |then
+        |  logger.info("Hello");
+        |  insert("HELLO WORLD");
+        |end
+        |""".stripMargin
     val engine = DroolsEngine(drl)
     engine.fireAllRules()
     engine.getObjects.headOption.value shouldBe "HELLO WORLD"
@@ -122,7 +122,7 @@ class DroolsEngineBasicsTest extends FlatSpec with Matchers {
         |""".stripMargin
     val engine = DroolsEngine(drl)
     engine.fireAllRules()
-    engine.getStrings() shouldBe List("Cool Raoul")
+    engine.strings shouldBe List("Cool Raoul")
   }
 
 

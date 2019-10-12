@@ -1,25 +1,22 @@
 package fr.janalyse.droolscripting
 
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 
 import org.slf4j._
 import scala.jdk.CollectionConverters._
 import scala.util.Try
 import org.kie.api._
 import org.kie.api.runtime.KieSession
-import org.kie.api.builder._
-import org.kie.api.io._
 import org.kie.api.time.{SessionClock, SessionPseudoClock}
-import org.kie.internal.io.ResourceFactory
 import org.kie.api.definition.`type`.FactType
-import java.util.Date
 import java.util.concurrent.TimeUnit
 
 import com.owlike.genson.GensonBuilder
-import org.drools.compiler.kie.builder.impl.InternalKieModule
 import org.kie.api.runtime.rule.FactHandle
 
+/**
+ * DroolsEngine factories
+ */
 object DroolsEngine {
   def apply(drl: String): DroolsEngine = {
     new DroolsEngine("kbase1", drl, new DroolsEngineConfig())
@@ -37,6 +34,13 @@ object DroolsEngine {
     new DroolsEngine(kbaseName, drl, config)
   }
 }
+
+/**
+ * Drools engine abstraction
+ * @param kbaseName knowledge base name (what ever you want)
+ * @param drl knowledge base content (rules, declarations, ...)
+ * @param config drools engine configuration
+ */
 
 class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) extends RuntimeDrools {
   private val logger = org.slf4j.LoggerFactory.getLogger("DroolsEngine")
@@ -59,14 +63,14 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
       logger.warn(s"Couldn't automically configure log levels for ${rootLogger.getClass.getCanonicalName} logger")
   }
 
-  def makeKModuleContent(config: DroolsEngineConfig): String = {
+  private def makeKModuleContent(config: DroolsEngineConfig): String = {
     val equalsBehavior = if (config.equalsWithIdentity) "identity" else "equality"
     val eventProcessingMode = config.eventProcessingMode match {
       case StreamMode => "stream"
       case CloudMode => "cloud"
     }
     val sessionName = config.ksessionName
-    val clockKind = if (config.pseudoClock) "pseudo" else ""
+    val clockKind = if (config.pseudoClock) "pseudo" else "realtime"
     s"""<kmodule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        |         xmlns="http://www.drools.org/xsd/kmodule">
        |  <kbase name="$kbaseName"
@@ -142,11 +146,17 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
   def advanceTimeDays(days: Int): Unit = advanceTime(days, TimeUnit.DAYS)
 
   def advanceTime(seconds: Int, timeUnit: TimeUnit = TimeUnit.SECONDS): Unit = {
-    if (config.pseudoClock) {
-      val pseudoClock = session.getSessionClock.asInstanceOf[SessionPseudoClock]
-      pseudoClock.advanceTime(seconds, timeUnit)
+    if (config.eventProcessingMode == StreamMode) {
+      if (config.pseudoClock) {
+        val pseudoClock = session.getSessionClock.asInstanceOf[SessionPseudoClock]
+        pseudoClock.advanceTime(seconds, timeUnit)
+      } else {
+        val msg = "time clock adjustements can only work with pseudo clock, check your configuration"
+        logger.warn(msg)
+        throw new DroolsEngineException(msg)
+      }
     } else {
-      val msg = "time shift can only work with pseudo clock, check your configuration"
+      val msg = "time clock adjustements can only work in stream mode, check your eventProcessingMode configuration"
       logger.warn(msg)
       throw new DroolsEngineException(msg)
     }
@@ -195,7 +205,12 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
     }
   }
 
-  def getStrings():List[String] = {
+  /**
+   * A convenient method to quickly extract all string instance from drools working
+   * memory. Using such strings is quite helpful for testing purposes.
+   * @return working memory String instances
+   */
+  def strings:List[String] = {
     getModelInstances("java.lang.String").toList.collect {
       case str:String => str
     }

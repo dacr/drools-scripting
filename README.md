@@ -21,7 +21,7 @@ object HelloTest extends FlatSpec with Matchers {
         |""".stripMargin
     val engine = DroolsEngine(drl)
     engine.fireAllRules()
-    engine.getObjects.headOption.value shouldBe "HELLO WORLD"
+    engine.strings shouldBe List("HELLO WORLD")
   }
 }
 HelloTest.execute()

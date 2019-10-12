@@ -1,7 +1,5 @@
 package fr.janalyse.droolscripting
 
-import org.slf4j.Logger
-
 sealed trait EventProcessingMode
 object StreamMode extends EventProcessingMode
 object CloudMode extends EventProcessingMode
