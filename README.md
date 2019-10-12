@@ -5,7 +5,7 @@ An [hello world drools example](https://gist.github.com/dacr/6921d569fd33182da35
 
 ```scala
 import $ivy.`org.scalatest::scalatest:3.0.8`
-import $ivy.`fr.janalyse::drools-scripting:1.0.1`
+import $ivy.`fr.janalyse::drools-scripting:1.0.6`
 
 import org.scalatest._, org.scalatest.OptionValues._
 import fr.janalyse.droolscripting._
@@ -30,7 +30,7 @@ HelloTest.execute()
 or an other one :
 
 ```scala
-import $ivy.`fr.janalyse::drools-scripting:1.0.1`, $ivy.`org.scalatest::scalatest:3.0.8`
+import $ivy.`fr.janalyse::drools-scripting:1.0.6`, $ivy.`org.scalatest::scalatest:3.0.8`
 import fr.janalyse.droolscripting._, org.scalatest._, org.scalatest.OptionValues._
 
 object HelloTest extends FlatSpec with Matchers {
