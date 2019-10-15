@@ -113,4 +113,24 @@ class DroolsEngineJsonTest extends FlatSpec with Matchers {
     combo.toString should include regex "LOW.*GREEN"
   }
 
+  it should "be able to deserialize java Maps" in {
+    val drl =
+      """package test
+        |import java.util.Map
+        |declare Config
+        |  props:Map
+        |end
+        |//-----------------
+        |rule "check" when
+        |  Config(props["scope"] == "prod")
+        |then
+        |  insert("OK");
+        |end
+        |""".stripMargin
+    val engine = DroolsEngine(drl)
+    engine.insertJson("""{"props":{"scope":"prod"}}""", "test.Config")
+    engine.fireAllRules()
+    engine.strings shouldBe List("OK")
+  }
+
 }
