@@ -1,8 +1,10 @@
 package fr.janalyse.droolscripting
 
+import java.io.File
 import java.text.SimpleDateFormat
 
 import org.slf4j._
+
 import scala.jdk.CollectionConverters._
 import scala.util.Try
 import org.kie.api._
@@ -18,6 +20,14 @@ import org.kie.api.runtime.rule.FactHandle
  * DroolsEngine factories
  */
 object DroolsEngine {
+  def apply(drlFile: File): DroolsEngine = {
+    apply(drlFile, new DroolsEngineConfig())
+  }
+  def apply(drlFile: File, config:DroolsEngineConfig): DroolsEngine = {
+    val drl = scala.io.Source.fromFile(drlFile).getLines().mkString("\n")
+    new DroolsEngine("kbase1", drl, config)
+  }
+
   def apply(drl: String): DroolsEngine = {
     new DroolsEngine("kbase1", drl, new DroolsEngineConfig())
   }

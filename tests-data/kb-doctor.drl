@@ -1,0 +1,46 @@
+package diagnosis
+dialect "mvel"
+// ------------------------------------------
+declare enum Strength NONE(0),LOW(1),MEDIUM(2),HIGH(3);
+  intensity: int
+end
+declare enum CoughingKind NONE(0),DRY(1), OILY(2);
+  kind: int
+end
+
+// ------------------------------------------
+declare Sickness end
+declare Flu extends Sickness end
+
+// ------------------------------------------
+declare Symptom end
+
+declare Fever extends Symptom // --- Fièvre
+  strength:Strength
+end
+declare Coughing extends Symptom // --- Toux
+  strength:Strength
+  kind:CoughingKind
+end
+declare MuscleAche extends Symptom // --- Courbature
+  strength:Strength
+end
+
+// ------------------------------------------
+declare PatientTemperature
+  temperature: float
+end
+
+rule "no fever"     when PatientTemperature(temperature < 38)          then insert(new Fever(Strength.NONE));   end
+rule "low fever"    when PatientTemperature(temperature >= 38 && < 39) then insert(new Fever(Strength.LOW));    end
+rule "medium fever" when PatientTemperature(temperature >= 39 && < 40) then insert(new Fever(Strength.MEDIUM)); end
+rule "high fever"   when PatientTemperature(temperature >= 40)         then insert(new Fever(Strength.HIGH));   end
+
+// ------------------------------------------
+rule "flu diagnostic"
+when
+  Fever(strength.intensity >= Strength.MEDIUM.intensity)
+  MuscleAche(strength != Strength.NONE)
+then
+  insert(new Flu());
+end
