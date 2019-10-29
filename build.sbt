@@ -9,8 +9,8 @@ crossScalaVersions := Seq(scalaVersion.value, "2.12.10", "2.11.12")
 Test / fork := true  // Required to avoid "logger conflict" between sbt and code tests
 
 libraryDependencies ++= Seq(
-  "org.drools"               % "drools-core"             % "7.27.0.Final",
-  "org.drools"               % "drools-compiler"         % "7.27.0.Final",
+  "org.drools"               % "drools-core"             % "7.28.0.Final",
+  "org.drools"               % "drools-compiler"         % "7.28.0.Final",
   "org.slf4j"                % "slf4j-api"               % "1.7.28",
   "ch.qos.logback"           % "logback-classic"         % "1.2.3",
   "com.owlike"               % "genson"                  % "1.6",
