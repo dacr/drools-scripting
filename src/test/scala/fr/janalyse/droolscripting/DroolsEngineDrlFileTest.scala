@@ -12,7 +12,7 @@ class DroolsEngineDrlFileTest extends FlatSpec with Matchers {
     val facts = List(
       """{"temperature":39.5}"""                 -> "diagnosis.PatientTemperature",
       """{"strength":"MEDIUM", "kind":"OILY"}""" -> "diagnosis.Coughing",
-      """{"strength":"HIGH"}"""                  -> "diagnosis.MuscleAche",
+      """{"strength":"HIGH"}"""                  -> "diagnosis.MuscleAche"
     )
     //facts.foreach{case (json, dataType) => engine.insertJson(json, dataType)}
     for { (json, dataType) <- facts } {
