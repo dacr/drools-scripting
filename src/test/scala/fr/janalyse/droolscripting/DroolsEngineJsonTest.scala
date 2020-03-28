@@ -1,9 +1,25 @@
+/*
+ * Copyright 2020 David Crosson
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package fr.janalyse.droolscripting
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec._
+import org.scalatest.matchers._
 import org.scalatest.OptionValues._
 
-class DroolsEngineJsonTest extends FlatSpec with Matchers {
+class DroolsEngineJsonTest extends AnyFlatSpec with should.Matchers {
   "Drools" should "manage json inputs associated to simple mvel declarations" in {
     val drl =
       """package testdrools
@@ -21,7 +37,7 @@ class DroolsEngineJsonTest extends FlatSpec with Matchers {
     val engine = DroolsEngine(drl)
     engine.insertJson("""{"name":"John"}""", "testdrools.Someone")
     engine.fireAllRules()
-    engine.getModelFirstInstance("testdrools.Someone") shouldBe 'defined
+    engine.getModelFirstInstance("testdrools.Someone").isDefined shouldBe true
     engine.getModelFirstInstance("java.lang.String").value shouldBe "Hello John"
     engine.dispose()
   }

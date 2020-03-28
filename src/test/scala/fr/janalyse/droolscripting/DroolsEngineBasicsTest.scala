@@ -1,13 +1,12 @@
 package fr.janalyse.droolscripting
 
-import java.util.Date
-import scala.jdk.CollectionConverters._
-import org.scalatest._
+import org.scalatest.flatspec._
+import org.scalatest.matchers._
 import org.scalatest.OptionValues._
 
 import DroolsEngineConfig._
 
-class DroolsEngineBasicsTest extends FlatSpec with Matchers {
+class DroolsEngineBasicsTest extends AnyFlatSpec with should.Matchers {
 
   "Drools" should "say hello" in {
     val drl =

@@ -1,8 +1,9 @@
 package fr.janalyse.droolscripting
 
 import fr.janalyse.droolscripting.DroolsEngineConfig._
-import org.scalatest.OptionValues._
-import org.scalatest._
+import org.scalatest.flatspec._
+import org.scalatest.matchers._
+
 
 
 object namespace1 {
@@ -12,7 +13,7 @@ object namespace1 {
 }
 case class Dummy(name: String, value: Int)
 
-class DroolsEngineCaseClassesTest extends FlatSpec with Matchers {
+class DroolsEngineCaseClassesTest extends AnyFlatSpec with should.Matchers {
 
   "drools" should "manage right regular case classes, but unfortunately not those created from ammonite" in {
     info(namespace1.namespace2.DummyX("truc", 42).getClass.getName)

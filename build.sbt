@@ -1,63 +1,33 @@
 name := "drools-scripting"
 organization := "fr.janalyse"
 homepage := Some(new URL("https://github.com/dacr/drools-scripting"))
+licenses += "Apache 2" -> url(s"http://www.apache.org/licenses/LICENSE-2.0.txt")
+scmInfo := Some(ScmInfo(url(s"https://github.com/dacr/drools-scripting"), s"git@github.com:dacr/drools-scripting.git"))
 
 
 scalaVersion := "2.13.1"
-crossScalaVersions := Seq(scalaVersion.value, "2.12.10", "2.11.12")
+scalacOptions ++= Seq( "-deprecation", "-unchecked", "-feature")
+
+crossScalaVersions := Seq("2.12.11", "2.13.1")
+// 2.12.11 : generates java 8 bytecodes && JVM8 required for compilation
+// 2.13.1  : generates java 8 bytecodes && JVM8 required for compilation
 
 Test / fork := true  // Required to avoid "logger conflict" between sbt and code tests
 
 libraryDependencies ++= Seq(
-  "org.drools"               % "drools-core"             % "7.31.0.Final",
-  "org.drools"               % "drools-compiler"         % "7.31.0.Final",
+  "org.drools"               % "drools-core"             % "7.34.0.Final",
+  "org.drools"               % "drools-compiler"         % "7.34.0.Final",
   "org.slf4j"                % "slf4j-api"               % "1.7.30",
   "ch.qos.logback"           % "logback-classic"         % "1.2.3",
   "com.owlike"               % "genson"                  % "1.6",
-  "org.scala-lang.modules"  %% "scala-collection-compat" % "2.1.3",
-  "org.scalatest"           %% "scalatest"               % "3.1.0" % "test",
+  "org.scala-lang.modules"  %% "scala-collection-compat" % "2.1.4",
+  "org.scalatest"           %% "scalatest"               % "3.1.1" % "test",
 )
 
-pomIncludeRepository := { _ => false }
-
-useGpg := true
-
-licenses += "Apache 2" -> url(s"http://www.apache.org/licenses/LICENSE-2.0.txt")
-releaseCrossBuild := true
-releasePublishArtifactsAction := PgpKeys.publishSigned.value
-publishMavenStyle := true
-publishArtifact in Test := false
-publishTo := Some(if (isSnapshot.value) Opts.resolver.sonatypeSnapshots else Opts.resolver.sonatypeStaging)
-
-scmInfo := Some(ScmInfo(url(s"https://github.com/dacr/drools-scripting"), s"git@github.com:dacr/drools-scripting.git"))
-
-PgpKeys.useGpg in Global := true // workaround with pgp and sbt 1.2.x
-pgpSecretRing := pgpPublicRing.value // workaround with pgp and sbt 1.2.x
-
-pomExtra in Global := {
-  <developers>
-    <developer>
-      <id>dacr</id>
-      <name>David Crosson</name>
-      <url>https://github.com/dacr</url>
-    </developer>
-  </developers>
+testOptions in Test += {
+  val rel = scalaVersion.value.split("[.]").take(2).mkString(".")
+  Tests.Argument(
+    "-oDF", // -oW to remove colors
+    "-u", s"target/junitresults/scala-$rel/"
+  )
 }
-
-
-import ReleaseTransformations._
-
-releaseProcess := Seq[ReleaseStep](
-  checkSnapshotDependencies,
-  inquireVersions,
-  runClean,
-  runTest,
-  setReleaseVersion,
-  commitReleaseVersion,
-  tagRelease,
-  publishArtifacts,
-  setNextVersion,
-  commitNextVersion,
-  releaseStepCommand("sonatypeReleaseAll"),
-  pushChanges
-)
