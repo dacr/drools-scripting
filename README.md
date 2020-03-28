@@ -66,8 +66,8 @@ HelloTest.execute()
 [travisImg2]: https://travis-ci.org/dacr/drools-scripting.png?branch=master
 [travisLink]:https://travis-ci.org/dacr/drools-scripting
 
-[mavenImg]: https://img.shields.io/maven-central/v/fr.janalyse/naturalsort_2.12.svg
-[mavenImg2]: https://maven-badges.herokuapp.com/maven-central/fr.janalyse/naturalsort_2.12/badge.svg
+[mavenImg]: https://img.shields.io/maven-central/v/fr.janalyse/drools-scripting_2.13.svg
+[mavenImg2]: https://maven-badges.herokuapp.com/maven-central/fr.janalyse/drools-scripting_2.13/badge.svg
 [mavenLink]: https://search.maven.org/#search%7Cga%7C1%7Cfr.janalyse.drools-scripting
 
 [licenseImg]: https://img.shields.io/github/license/dacr/drools-scripting.svg
