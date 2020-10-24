@@ -17,6 +17,7 @@ package fr.janalyse.droolscripting
 
 import java.io.File
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 
 import org.slf4j._
 
@@ -70,12 +71,18 @@ object DroolsEngine {
 class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) extends RuntimeDrools {
   private val logger = org.slf4j.LoggerFactory.getLogger("DroolsEngine")
 
-  val dateFormatPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-
+  val dateFormatPattern = "yyyy-MM-dd'T'HH:mm:ss[.SSS]X"
+  val dateTimeFormatter = DateTimeFormatter.ofPattern(dateFormatPattern)
+  val converters = Array(
+    OffsetDateTimeConverter(dateTimeFormatter),
+    ZonedDateTimeConverter(dateTimeFormatter),
+    LocalDateTimeConverter(dateTimeFormatter),
+    DateConverter(dateTimeFormatter)
+  )
   private val genson =
     new GensonBuilder()
-      .useDateFormat(new SimpleDateFormat(dateFormatPattern))
       .setSkipNull(true)
+      .withConverters(converters:_*)
       .useConstructorWithArguments(false) // Take care, with true you may encounter IllegalArgumentException within asm.ClassReader
       .create()
 
