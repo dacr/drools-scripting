@@ -32,34 +32,6 @@ import java.util.concurrent.TimeUnit
 import com.owlike.genson.{Converter, GensonBuilder}
 import org.kie.api.runtime.rule.FactHandle
 
-/**
- * DroolsEngine factories
- */
-object DroolsEngine {
-  def apply(drlFile: File): DroolsEngine = {
-    apply(drlFile, new DroolsEngineConfig())
-  }
-  def apply(drlFile: File, config:DroolsEngineConfig): DroolsEngine = {
-    val drl = scala.io.Source.fromFile(drlFile).getLines().mkString("\n")
-    new DroolsEngine("kbase1", drl, config)
-  }
-
-  def apply(drl: String): DroolsEngine = {
-    new DroolsEngine("kbase1", drl, new DroolsEngineConfig())
-  }
-
-  def apply(drl: String, config: DroolsEngineConfig): DroolsEngine = {
-    new DroolsEngine("kbase1", drl, config)
-  }
-
-  def apply(kbaseName: String, drl: String): DroolsEngine = {
-    new DroolsEngine(kbaseName, drl, new DroolsEngineConfig())
-  }
-
-  def apply(kbaseName: String, drl: String, config: DroolsEngineConfig): DroolsEngine = {
-    new DroolsEngine(kbaseName, drl, config)
-  }
-}
 
 /**
  * Drools engine abstraction
@@ -175,11 +147,18 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
   def advanceTimeHours(hours: Int): Unit = advanceTime(hours, TimeUnit.HOURS)
   def advanceTimeDays(days: Int): Unit = advanceTime(days, TimeUnit.DAYS)
 
-  def advanceTime(seconds: Int, timeUnit: TimeUnit = TimeUnit.SECONDS): Unit = {
+  /**
+   * Manipulate the time, if a pseudo clock has been configured.
+   * This method is very important for unit test purposes.
+   *
+   * @param duration how much time shall will go in future
+   * @param timeUnit the time unit, default is seconds
+   */
+  def advanceTime(duration: Int, timeUnit: TimeUnit = TimeUnit.SECONDS): Unit = {
     if (config.eventProcessingMode == StreamMode) {
       if (config.pseudoClock) {
         val pseudoClock = session.getSessionClock.asInstanceOf[SessionPseudoClock]
-        pseudoClock.advanceTime(seconds, timeUnit)
+        pseudoClock.advanceTime(duration, timeUnit)
       } else {
         val msg = "time clock adjustements can only work with pseudo clock, check your configuration"
         logger.warn(msg)
@@ -192,12 +171,36 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
     }
   }
 
+  /**
+   * delete a fact
+   *
+   * @param handle
+   */
   def delete(handle: FactHandle): Unit = session.delete(handle)
 
+  /**
+   * update a fact
+   *
+   * @param handle
+   * @param that
+   */
   def update(handle: FactHandle, that: AnyRef): Unit = session.update(handle, that)
 
+  /**
+   * insert a raw object into drools, it can be anything
+   *
+   * @param that
+   * @return
+   */
   def insert(that: AnyRef): FactHandle = session.insert(that)
 
+  /**
+   * Insert a fact described in json, the given typeInfo will be use to find the right declaration
+   *
+   * @param json the fact to insert
+   * @param typeInfo the type of the object we will create
+   * @return internal drools fact handle
+   */
   def insertJson(json: String, typeInfo: String): FactHandle = {
     val cl = container.getClassLoader
     val clazz = cl.loadClass(typeInfo)
@@ -205,23 +208,61 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
     insert(result)
   }
 
+  /**
+   * Makes the drools engine fire all activable rules, it will stop once no more rules are activable
+   *
+   * @return number of rule fired
+   */
+
   def fireAllRules(): Int = session.fireAllRules()
 
+  /**
+   * Enter a forever fireAll loop
+   */
   def fireUntilHalt(): Unit = session.fireUntilHalt()
 
+  /**
+   * Retreive all available fact from drools working memory
+   *
+   * @return objects iterable
+   */
   def getObjects: Iterable[Any] = session.getObjects().asScala
 
+  /**
+   * Retreive as json all available fact from drools working memory
+   *
+   * @return json strings iterable
+   */
   def getObjectsAsJson:Iterable[String] = session.getObjects().asScala.map(genson.serialize)
 
+  /**
+   * Get all facts which have the given type or inheritate from it
+   *
+   * @param declaredType the full type information of the facts we want to extract
+   * @return objects iterable
+   */
   def getModelInstances(declaredType: String): Iterable[Any] = {
     val declaredTypeClass = container.getClassLoader.loadClass(declaredType)
     getObjects.filter(ob => declaredTypeClass.isAssignableFrom(ob.getClass))
   }
 
+  /**
+   * Get all facts which have the given type or inheritate from it
+   *
+   * @param declaredType the full type information of the facts we want to extract
+   * @return json strings iterable
+   */
   def getModelInstancesAsJson(declaredType:String): Iterable[String] = {
     getModelInstances(declaredType).map(genson.serialize)
   }
 
+  /**
+   * Retrieve a field value from a drools facts previously extracted from the working memory
+   *
+   * @param instance
+   * @param attributeName
+   * @return
+   */
   def getModelInstanceAttribute(instance: Any, attributeName: String): Option[Object] = {
     Try {
       val declaredType = instance.getClass.getCanonicalName
@@ -231,14 +272,34 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
     }.toOption
   }
 
+  /**
+   * Convenient method to quickly get the first available instance of the given type
+   *
+   * @param declaredType
+   * @return object option
+   */
   def getModelFirstInstance(declaredType: String): Option[Any] = {
     getModelInstances(declaredType).headOption
   }
 
+  /**
+   * Convenient method to quickly get the first available json instance of the given type
+   *
+   * @param declaredType
+   * @return json string option
+   */
   def getModelFirstInstanceAsJson(declaredType: String): Option[String] = {
     getModelFirstInstance(declaredType).map(genson.serialize)
   }
 
+  /**
+   * Convenient method to extract a field value from the first found instance of the given type
+   * Of course, really convenient if only have just one instance of the given type
+   *
+   * @param declaredType
+   * @param attributeName
+   * @return value
+   */
   def getModelFirstInstanceAttribute(declaredType: String, attributeName: String): Option[Object] = {
     getModelFirstInstance(declaredType).flatMap { instance =>
       getModelInstanceAttribute(instance, attributeName)
@@ -254,5 +315,35 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
     getModelInstances("java.lang.String").toList.collect {
       case str:String => str
     }
+  }
+}
+
+
+/**
+ * DroolsEngine factories
+ */
+object DroolsEngine {
+  def apply(drlFile: File): DroolsEngine = {
+    apply(drlFile, new DroolsEngineConfig())
+  }
+  def apply(drlFile: File, config:DroolsEngineConfig): DroolsEngine = {
+    val drl = scala.io.Source.fromFile(drlFile).getLines().mkString("\n")
+    new DroolsEngine("kbase1", drl, config)
+  }
+
+  def apply(drl: String): DroolsEngine = {
+    new DroolsEngine("kbase1", drl, new DroolsEngineConfig())
+  }
+
+  def apply(drl: String, config: DroolsEngineConfig): DroolsEngine = {
+    new DroolsEngine("kbase1", drl, config)
+  }
+
+  def apply(kbaseName: String, drl: String): DroolsEngine = {
+    new DroolsEngine(kbaseName, drl, new DroolsEngineConfig())
+  }
+
+  def apply(kbaseName: String, drl: String, config: DroolsEngineConfig): DroolsEngine = {
+    new DroolsEngine(kbaseName, drl, config)
   }
 }

@@ -1,13 +1,14 @@
 # Drools scripting [![Build Status][travisImg]][travisLink] [![License][licenseImg]][licenseLink] [![Maven][mavenImg]][mavenLink]
-Drools made easy to use for scripting or testing purposes.
+[Drools](https://www.drools.org/) made easy to use for scripting or testing purposes.
 
-This library allows you to easily design proof of concepts based of the drools expert system.
+This library allows you to easily design proof of concepts based of the [drools expert system](https://www.drools.org/).
 It greatly simplifies how you can quickly write drools based code examples or small experiments.
 
 Just insert JSON facts into your drools working memory, and use the available engine methods to 
 interact with the expert system and extract data from it. Data extraction can be done through
 simple accessors or through the JSON format. Check the documented methods in the DroolsEngine class
 or take a look to the [large amount of example I've made available](https://gist.github.com/dacr/c071a7b7d3de633281cbe84a34be47f1#drools).
+(Most of them can be run directly by using the great [ammonite](http://ammonite.io/) REPL solution from [Li Haoyi](https://github.com/lihaoyi))
 
 An [hello world drools example](https://gist.github.com/dacr/6921d569fd33182da358d6a8e383aa0a) runnable with [ammonite](http://ammonite.io/) :
 
@@ -32,7 +33,7 @@ object HelloTest extends AnyFlatSpec with should.Matchers {
 HelloTest.execute()
 ```
 
-or [an other one](https://gist.github.com/dacr/89405b045a9ef691706235b474a9a11d) :
+or [an other one](https://gist.github.com/dacr/89405b045a9ef691706235b474a9a11d) runnable with [ammonite](http://ammonite.io/) :
 
 ```scala
 import $ivy.`fr.janalyse::drools-scripting:1.0.10`, $ivy.`org.scalatest::scalatest:3.2.2`
