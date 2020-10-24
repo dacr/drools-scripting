@@ -36,7 +36,7 @@ HelloTest.execute()
 or [an other one](https://gist.github.com/dacr/89405b045a9ef691706235b474a9a11d) runnable with [ammonite](http://ammonite.io/) :
 
 ```scala
-import $ivy.`fr.janalyse::drools-scripting:1.0.10`, $ivy.`org.scalatest::scalatest:3.2.2`
+import $ivy.`fr.janalyse::drools-scripting:1.0.11`, $ivy.`org.scalatest::scalatest:3.2.2`
 import fr.janalyse.droolscripting._, org.scalatest._, flatspec._, matchers._, OptionValues._
 
 object HelloTest extends AnyFlatSpec with should.Matchers {
