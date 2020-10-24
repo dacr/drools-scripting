@@ -29,7 +29,7 @@ import org.kie.api.time.{SessionClock, SessionPseudoClock}
 import org.kie.api.definition.`type`.FactType
 import java.util.concurrent.TimeUnit
 
-import com.owlike.genson.GensonBuilder
+import com.owlike.genson.{Converter, GensonBuilder}
 import org.kie.api.runtime.rule.FactHandle
 
 /**
@@ -71,18 +71,16 @@ object DroolsEngine {
 class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) extends RuntimeDrools {
   private val logger = org.slf4j.LoggerFactory.getLogger("DroolsEngine")
 
-  val dateFormatPattern = "yyyy-MM-dd'T'HH:mm:ss[.SSS]X"
-  val dateTimeFormatter = DateTimeFormatter.ofPattern(dateFormatPattern)
-  val converters = Array(
-    OffsetDateTimeConverter(dateTimeFormatter),
-    ZonedDateTimeConverter(dateTimeFormatter),
-    LocalDateTimeConverter(dateTimeFormatter),
-    DateConverter(dateTimeFormatter)
-  )
   private val genson =
     new GensonBuilder()
       .setSkipNull(true)
-      .withConverters(converters:_*)
+      .withConverters(
+        OffsetDateTimeConverter(),
+        ZonedDateTimeConverter(),
+        LocalDateTimeConverter(),
+        DateConverter()
+      )
+      .useClassMetadata(true)
       .useConstructorWithArguments(false) // Take care, with true you may encounter IllegalArgumentException within asm.ClassReader
       .create()
 
@@ -213,9 +211,15 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
 
   def getObjects: Iterable[Any] = session.getObjects().asScala
 
+  def getObjectsAsJson:Iterable[String] = session.getObjects().asScala.map(genson.serialize)
+
   def getModelInstances(declaredType: String): Iterable[Any] = {
     val declaredTypeClass = container.getClassLoader.loadClass(declaredType)
     getObjects.filter(ob => declaredTypeClass.isAssignableFrom(ob.getClass))
+  }
+
+  def getModelInstancesAsJson(declaredType:String): Iterable[String] = {
+    getModelInstances(declaredType).map(genson.serialize)
   }
 
   def getModelInstanceAttribute(instance: Any, attributeName: String): Option[Object] = {
@@ -229,6 +233,10 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
 
   def getModelFirstInstance(declaredType: String): Option[Any] = {
     getModelInstances(declaredType).headOption
+  }
+
+  def getModelFirstInstanceAsJson(declaredType: String): Option[String] = {
+    getModelFirstInstance(declaredType).map(genson.serialize)
   }
 
   def getModelFirstInstanceAttribute(declaredType: String, attributeName: String): Option[Object] = {

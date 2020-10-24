@@ -96,12 +96,15 @@ class DroolsEngineJsonTest extends AnyFlatSpec with should.Matchers {
         |""".stripMargin
     val engine = DroolsEngine(drl)
     engine.insertJson("""{"name":"joe", "birth":"2019-01-01T14:00:00Z"}""", "test.Someone")
+    engine.insertJson("""{"name":"joe2", "birth":"2019-01-01T14:00:00+0800"}""", "test.Someone")
     engine.insertJson("""{"name":"sarah", "birth":"2019-01-01T14:00:00.042Z"}""", "test.Someone")
-    engine.insertJson("""{"name":"brad", "birth":"2019-01-01T14:00:00.042+00:00"}""", "test.Someone")
+    engine.insertJson("""{"name":"brad", "birth":"2019-01-01T14:00:00.042-0100"}""", "test.Someone")
     engine.fireAllRules()
     val people = engine.getModelInstances("test.Someone")
     info(people.mkString(","))
-    people should have size 3
+    people should have size 4
+    val peopleAsJson = engine.getModelInstancesAsJson("test.Someone")
+    println(peopleAsJson.mkString("\n"))
   }
 
   it should "be able to deal with ISO8601 + milliseconds json dates" in {
@@ -115,12 +118,15 @@ class DroolsEngineJsonTest extends AnyFlatSpec with should.Matchers {
         |""".stripMargin
     val engine = DroolsEngine(drl)
     engine.insertJson("""{"name":"joe", "birth":"2019-01-01T14:00:00Z"}""", "test.Someone")
+    engine.insertJson("""{"name":"joe2", "birth":"2019-01-01T14:00:00+0800"}""", "test.Someone")
     engine.insertJson("""{"name":"sarah", "birth":"2019-01-01T14:00:00.042Z"}""", "test.Someone")
-    engine.insertJson("""{"name":"brad", "birth":"2019-01-01T14:00:00.042+00:00"}""", "test.Someone")
+    engine.insertJson("""{"name":"brad", "birth":"2019-01-01T14:00:00.042-0100"}""", "test.Someone")
     engine.fireAllRules()
     val people = engine.getModelInstances("test.Someone")
     info(people.mkString(","))
-    people should have size 3
+    people should have size 4
+    val peopleAsJson = engine.getModelInstancesAsJson("test.Someone")
+    println(peopleAsJson.mkString("\n"))
   }
 
   it should "be able to use enumerations" in {
