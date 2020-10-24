@@ -1,19 +1,24 @@
 # Drools scripting [![Build Status][travisImg]][travisLink] [![License][licenseImg]][licenseLink] [![Maven][mavenImg]][mavenLink]
 Drools made easy to use for scripting or testing purposes.
 
+This library allows you to easily design proof of concepts based of the drools expert system.
+It greatly simplifies how you can quickly write drools based code examples or small experiments.
+
+Just insert JSON facts into your drools working memory, and use the available engine methods to 
+interact with the expert system and extract data from it. Data extraction can be done through
+simple accessors or through the JSON format. Check the documented methods in the DroolsEngine class
+or take a look to the [large amount of example I've made available](https://gist.github.com/dacr/c071a7b7d3de633281cbe84a34be47f1#drools).
+
 An [hello world drools example](https://gist.github.com/dacr/6921d569fd33182da358d6a8e383aa0a) runnable with [ammonite](http://ammonite.io/) :
 
 ```scala
-import $ivy.`org.scalatest::scalatest:3.0.8`
-import $ivy.`fr.janalyse::drools-scripting:1.0.6`
+import $ivy.`fr.janalyse::drools-scripting:1.0.11`, $ivy.`org.scalatest::scalatest:3.2.2`
+import fr.janalyse.droolscripting._, org.scalatest.flatspec._, org.scalatest.matchers._
 
-import org.scalatest._, org.scalatest.OptionValues._
-import fr.janalyse.droolscripting._
-
-object HelloTest extends FlatSpec with Matchers {
+object HelloTest extends AnyFlatSpec with should.Matchers {
   "Drools" should "say hello" in {
     val drl =
-      """package testdrools
+      """package test
         |rule "hello" when
         |then
         |  insert("HELLO WORLD");
@@ -27,13 +32,13 @@ object HelloTest extends FlatSpec with Matchers {
 HelloTest.execute()
 ```
 
-or an other one :
+or [an other one](https://gist.github.com/dacr/89405b045a9ef691706235b474a9a11d) :
 
 ```scala
-import $ivy.`fr.janalyse::drools-scripting:1.0.6`, $ivy.`org.scalatest::scalatest:3.0.8`
-import fr.janalyse.droolscripting._, org.scalatest._, org.scalatest.OptionValues._
+import $ivy.`fr.janalyse::drools-scripting:1.0.10`, $ivy.`org.scalatest::scalatest:3.2.2`
+import fr.janalyse.droolscripting._, org.scalatest._, flatspec._, matchers._, OptionValues._
 
-object HelloTest extends FlatSpec with Matchers {
+object HelloTest extends AnyFlatSpec with should.Matchers {
   "Drools" should "say hello" in {
     val drl =
       """package test
