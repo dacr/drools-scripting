@@ -5,17 +5,17 @@ licenses += "Apache 2" -> url(s"http://www.apache.org/licenses/LICENSE-2.0.txt")
 scmInfo := Some(ScmInfo(url(s"https://github.com/dacr/drools-scripting"), s"git@github.com:dacr/drools-scripting.git"))
 
 
-scalaVersion := "2.13.3"
+scalaVersion := "2.13.4"
 scalacOptions ++= Seq( "-deprecation", "-unchecked", "-feature")
 
-crossScalaVersions := Seq("2.12.12", "2.13.3")
+crossScalaVersions := Seq("2.12.12", "2.13.4")
 // 2.12.12 : generates java 8 bytecodes && JVM8 required for compilation
 // 2.13.3  : generates java 8 bytecodes && JVM8 required for compilation
 
 Test / fork := true  // Required to avoid "logger conflict" between sbt and code tests
 
 lazy val versions = new {
-  val drools = "7.44.0.Final"
+  val drools = "7.46.0.Final"
 }
 
 libraryDependencies ++= Seq(
