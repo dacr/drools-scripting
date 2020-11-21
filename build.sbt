@@ -23,6 +23,7 @@ libraryDependencies ++= Seq(
   "org.drools"               % "drools-compiler"         % versions.drools,
   "org.drools"               % "drools-decisiontables"   % versions.drools,
   "org.drools"               % "drools-templates"        % versions.drools,
+  "org.drools"               % "drools-serialization-protobuf" % versions.drools,
   "org.jbpm"                 % "jbpm-flow"               % versions.drools,
   "org.jbpm"                 % "jbpm-bpmn2"              % versions.drools,
   "org.slf4j"                % "slf4j-api"               % "1.7.30",
