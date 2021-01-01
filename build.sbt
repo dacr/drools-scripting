@@ -10,12 +10,12 @@ scalacOptions ++= Seq( "-deprecation", "-unchecked", "-feature")
 
 crossScalaVersions := Seq("2.12.12", "2.13.4")
 // 2.12.12 : generates java 8 bytecodes && JVM8 required for compilation
-// 2.13.3  : generates java 8 bytecodes && JVM8 required for compilation
+// 2.13.4  : generates java 8 bytecodes && JVM8 required for compilation
 
 Test / fork := true  // Required to avoid "logger conflict" between sbt and code tests
 
 lazy val versions = new {
-  val drools = "7.46.0.Final"
+  val drools = "7.47.0.Final"
 }
 
 libraryDependencies ++= Seq(
@@ -29,8 +29,8 @@ libraryDependencies ++= Seq(
   "org.slf4j"                % "slf4j-api"               % "1.7.30",
   "ch.qos.logback"           % "logback-classic"         % "1.2.3",
   "com.owlike"               % "genson"                  % "1.6",
-  "org.scala-lang.modules"  %% "scala-collection-compat" % "2.2.0",
-  "org.scalatest"           %% "scalatest"               % "3.2.2" % "test",
+  "org.scala-lang.modules"  %% "scala-collection-compat" % "2.3.2",
+  "org.scalatest"           %% "scalatest"               % "3.2.3" % "test",
 )
 
 testOptions in Test += {
