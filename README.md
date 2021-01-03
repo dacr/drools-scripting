@@ -107,7 +107,9 @@ HelloTest.execute()
 [Ammonite][amm] resolves by default both binary and source artifacts, with recent release of drools it
 generates a runtime error as drools can't deal with several kie.conf file for a given module,
 so you'll have to changes ammonite default behavior in order to avoid sources resolutions.
-Just add those following lines :
+Just add those following lines at the beginning of all your drools scripts (`@` separates
+bootstrapping code from regular one, this is required as we change the behavior of the `import $ivy.`
+instruction):
 ```
 interp.resolutionHooks += { fetch =>
   // -- This is mandatory with drools >= 7.0.46 because drools sources artifacts also brings kie.conf
