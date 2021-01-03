@@ -1,7 +1,7 @@
 # Drools scripting [![Build Status][travisImg]][travisLink] [![License][licenseImg]][licenseLink] [![Maven][mavenImg]][mavenLink]
 [Drools](https://www.drools.org/) made easy to use for scripting or testing purposes.
 
-This library allows you to easily design proof of concepts based of the [drools expert system](https://www.drools.org/).
+This library allows you to easily design proof of concepts based on the [drools expert system](https://www.drools.org/).
 It greatly simplifies how you can quickly write drools based code examples or small experiments.
 
 Just insert JSON facts into your drools working memory, and use the available engine methods to 
@@ -101,6 +101,28 @@ object HelloTest extends AnyFlatSpec with should.Matchers {
 }
 HelloTest.execute()
 ```
+
+# Ammonite notes
+
+[Ammonite][amm] resolves by default both binary and source artifacts, with recent release of drools it
+generates a runtime error as drools can't deal with several kie.conf file for a given module,
+so you'll have to changes ammonite default behavior in order to avoid sources resolutions.
+Just add those following lines :
+```
+interp.resolutionHooks += { fetch =>
+  // -- This is mandatory with drools >= 7.0.46 because drools sources artifacts also brings kie.conf
+  // -- (it generates resources conflict at KIE init) and because by default ammonite also load sources artifact...
+  import scala.jdk.CollectionConverters._
+  fetch.withClassifiers(fetch.getClassifiers.asScala.filter(_ != "sources").asJava)
+}
+
+@
+
+import $ivy.`fr.janalyse::drools-scripting:1.0.13`
+```
+
+
+[amm]: https://ammonite.io/
 
 [travisImg]: https://img.shields.io/travis/dacr/drools-scripting.svg
 [travisImg2]: https://travis-ci.org/dacr/drools-scripting.png?branch=master
