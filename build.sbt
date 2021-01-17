@@ -15,7 +15,7 @@ crossScalaVersions := Seq("2.12.12", "2.13.4")
 Test / fork := true  // Required to avoid "logger conflict" between sbt and code tests
 
 lazy val versions = new {
-  val drools = "7.47.0.Final"
+  val drools = "7.48.0.Final"
 }
 
 libraryDependencies ++= Seq(
@@ -26,7 +26,7 @@ libraryDependencies ++= Seq(
   "org.drools"               % "drools-serialization-protobuf" % versions.drools,
   "org.jbpm"                 % "jbpm-flow"               % versions.drools,
   "org.jbpm"                 % "jbpm-bpmn2"              % versions.drools,
-  "com.google.protobuf"      % "protobuf-java"           % "3.13.0", // to remove some startup WARNINGS (illegal reflective access)
+  "com.google.protobuf"      % "protobuf-java"           % "3.14.0", // to remove some startup WARNINGS (illegal reflective access)
   "org.slf4j"                % "slf4j-api"               % "1.7.30",
   "ch.qos.logback"           % "logback-classic"         % "1.2.3",
   "com.owlike"               % "genson"                  % "1.6",
