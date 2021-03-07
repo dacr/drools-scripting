@@ -5,17 +5,17 @@ licenses += "Apache 2" -> url(s"http://www.apache.org/licenses/LICENSE-2.0.txt")
 scmInfo := Some(ScmInfo(url(s"https://github.com/dacr/drools-scripting"), s"git@github.com:dacr/drools-scripting.git"))
 
 
-scalaVersion := "2.13.4"
+scalaVersion := "2.13.5"
 scalacOptions ++= Seq( "-deprecation", "-unchecked", "-feature")
 
-crossScalaVersions := Seq("2.12.12", "2.13.4")
+crossScalaVersions := Seq("2.12.13", "2.13.5")
 // 2.12.12 : generates java 8 bytecodes && JVM8 required for compilation
 // 2.13.4  : generates java 8 bytecodes && JVM8 required for compilation
 
 Test / fork := true  // Required to avoid "logger conflict" between sbt and code tests
 
 lazy val versions = new {
-  val drools = "7.48.0.Final"
+  val drools = "7.50.0.Final"
 }
 
 libraryDependencies ++= Seq(
@@ -30,8 +30,8 @@ libraryDependencies ++= Seq(
   "org.slf4j"                % "slf4j-api"               % "1.7.30",
   "ch.qos.logback"           % "logback-classic"         % "1.2.3",
   "com.owlike"               % "genson"                  % "1.6",
-  "org.scala-lang.modules"  %% "scala-collection-compat" % "2.3.2",
-  "org.scalatest"           %% "scalatest"               % "3.2.3" % "test",
+  "org.scala-lang.modules"  %% "scala-collection-compat" % "2.4.2",
+  "org.scalatest"           %% "scalatest"               % "3.2.5" % "test",
 )
 
 testOptions in Test += {
