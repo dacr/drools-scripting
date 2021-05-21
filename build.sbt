@@ -5,7 +5,7 @@ licenses += "Apache 2" -> url(s"http://www.apache.org/licenses/LICENSE-2.0.txt")
 scmInfo := Some(ScmInfo(url(s"https://github.com/dacr/drools-scripting"), s"git@github.com:dacr/drools-scripting.git"))
 
 
-scalaVersion := "2.13.6"
+scalaVersion := "3.0.0"
 scalacOptions ++= Seq( "-deprecation", "-unchecked", "-feature")
 
 crossScalaVersions := Seq("2.12.13", "2.13.6", "3.0.0")

@@ -98,7 +98,10 @@ class DroolsEngineEqualityTest extends AnyFlatSpec with should.Matchers {
     val engine = DroolsEngine(drl, configWithEquality)
     engine.fireAllRules()
     engine.getObjects.size shouldBe 1
-    engine.getModelFirstInstanceAttribute("testdrools.Identity", "age").value shouldBe 42 // :(
+    engine.getModelFirstInstanceAttribute("testdrools.Identity", "age") match {
+      case Some(x: Int) => x shouldBe  42
+      case _ => fail("invalid response")
+    }
     engine.dispose()
   }
 
