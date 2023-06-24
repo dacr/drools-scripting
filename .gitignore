@@ -1,4 +1,20 @@
+# temporary files
+*~
+*.log
+nohup.out
+.attach_pid*
+
+# build related
 target/
-.idea/
-null/
+metals.sbt
+
+# IDE related
+.metals/
+.bloop/
 .bsp/
+.vscode/
+.idea/
+.classpath
+.project/
+.cache/
+.settings/
