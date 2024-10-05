@@ -1,9 +1,25 @@
 name         := "drools-scripting"
 organization := "fr.janalyse"
-homepage     := Some(new URL("https://github.com/dacr/drools-scripting"))
+homepage     := Some(url("https://github.com/dacr/drools-scripting"))
 scmInfo      := Some(ScmInfo(url(s"https://github.com/dacr/drools-scripting"), s"git@github.com:dacr/drools-scripting.git"))
 
 licenses += "NON-AI-APACHE2" -> url(s"https://github.com/non-ai-licenses/non-ai-licenses/blob/main/NON-AI-APACHE2")
+
+scmInfo := Some(
+  ScmInfo(
+    url(s"https://github.com/dacr/counters.git"),
+    s"git@github.com:dacr/counters.git"
+  )
+)
+
+developers := List(
+  Developer(
+    id = "dacr",
+    name = "David Crosson",
+    email = "crosson.david@gmail.com",
+    url = url("https://github.com/dacr")
+  )
+)
 
 scalaVersion := "3.5.1"
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature")
