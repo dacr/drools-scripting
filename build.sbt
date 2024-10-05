@@ -5,18 +5,16 @@ scmInfo      := Some(ScmInfo(url(s"https://github.com/dacr/drools-scripting"), s
 
 licenses += "NON-AI-APACHE2" -> url(s"https://github.com/non-ai-licenses/non-ai-licenses/blob/main/NON-AI-APACHE2")
 
-scalaVersion := "3.3.0"
+scalaVersion := "3.5.1"
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature")
 
-crossScalaVersions := Seq("2.12.13", "2.13.11", "3.3.0")
-// 2.12 : generates java 8 bytecodes && JVM8 required for compilation
-// 2.13  : generates java 8 bytecodes && JVM8 required for compilation
+crossScalaVersions := Seq("2.13.15", "3.5.1")
 
 Test / fork := true // Required to avoid "logger conflict" between sbt and code tests
 
 lazy val versions = new {
-  val drools = "8.40.0.Final"
-  val jbpm   = "1.40.0.Final"
+  val drools = "9.44.0.Final"
+  val jbpm   = "1.44.1.Final"
 }
 
 libraryDependencies ++= Seq(
@@ -28,12 +26,11 @@ libraryDependencies ++= Seq(
   "org.drools"              % "drools-serialization-protobuf" % versions.drools,
   "org.kie.kogito"          % "jbpm-flow"                     % versions.jbpm,
   "org.kie.kogito"          % "jbpm-bpmn2"                    % versions.jbpm,
-  // "com.google.protobuf"     % "protobuf-java"                 % "3.16.0", // to remove some startup WARNINGS (illegal reflective access)
-  "org.slf4j"               % "slf4j-api"                     % "2.0.7",
-  "ch.qos.logback"          % "logback-classic"               % "1.4.8",
+  "org.slf4j"               % "slf4j-api"                     % "2.0.16",
+  "ch.qos.logback"          % "logback-classic"               % "1.5.8",
   "com.owlike"              % "genson"                        % "1.6",
-  "org.scala-lang.modules" %% "scala-collection-compat"       % "2.11.0",
-  "org.scalatest"          %% "scalatest"                     % "3.2.16" % "test"
+  "org.scala-lang.modules" %% "scala-collection-compat"       % "2.12.0",
+  "org.scalatest"          %% "scalatest"                     % "3.2.19" % "test"
 )
 
 Test / testOptions += {
