@@ -15,10 +15,12 @@
  */
 package fr.janalyse.droolscripting
 
-import java.io.File
-import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
+import com.fasterxml.jackson.databind.{MapperFeature, ObjectMapper}
+import com.fasterxml.jackson.databind.json.JsonMapper
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 
+import java.io.File
 import org.slf4j._
 
 import scala.jdk.CollectionConverters._
@@ -27,9 +29,8 @@ import org.kie.api._
 import org.kie.api.runtime.KieSession
 import org.kie.api.time.{SessionClock, SessionPseudoClock}
 import org.kie.api.definition.`type`.FactType
-import java.util.concurrent.TimeUnit
 
-import com.owlike.genson.{Converter, GensonBuilder}
+import java.util.concurrent.TimeUnit
 import org.kie.api.runtime.rule.FactHandle
 
 
@@ -43,18 +44,28 @@ import org.kie.api.runtime.rule.FactHandle
 class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) extends RuntimeDrools {
   private val logger = org.slf4j.LoggerFactory.getLogger("DroolsEngine")
 
+//  private val genson =
+//    new GensonBuilder()
+//      .setSkipNull(true)
+//      .withConverters(
+//        OffsetDateTimeConverter(),
+//        ZonedDateTimeConverter(),
+//        LocalDateTimeConverter(),
+//        DateConverter()
+//      )
+//      .useClassMetadata(true)
+//      .useConstructorWithArguments(false) // Take care, with true you may encounter IllegalArgumentException within asm.ClassReader
+//      .create()
+
   private val genson =
-    new GensonBuilder()
-      .setSkipNull(true)
-      .withConverters(
-        OffsetDateTimeConverter(),
-        ZonedDateTimeConverter(),
-        LocalDateTimeConverter(),
-        DateConverter()
-      )
-      .useClassMetadata(true)
-      .useConstructorWithArguments(false) // Take care, with true you may encounter IllegalArgumentException within asm.ClassReader
-      .create()
+    JsonMapper
+      .builder()
+      .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+      .addModule(new JavaTimeModule())
+      .addModule(new Jdk8Module())
+      .build()
+
+
 
   LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) match {
     case rootLogger: ch.qos.logback.classic.Logger if config.withDroolsLogging =>
@@ -204,7 +215,7 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
   def insertJson(json: String, typeInfo: String): FactHandle = {
     val cl = container.getClassLoader
     val clazz = cl.loadClass(typeInfo)
-    val result = genson.deserialize(json, clazz).asInstanceOf[Object]
+    val result = genson.readValue(json, clazz).asInstanceOf[Object]
     insert(result)
   }
 
@@ -233,7 +244,11 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
    *
    * @return json strings iterable
    */
-  def getObjectsAsJson:Iterable[String] = session.getObjects().asScala.map(genson.serialize)
+  def getObjectsAsJson:Iterable[String] =
+    session
+      .getObjects()
+      .asScala
+      .map(genson.writeValueAsString)
 
   /**
    * Get all facts which have the given type or inheritate from it
@@ -253,7 +268,7 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
    * @return json strings iterable
    */
   def getModelInstancesAsJson(declaredType:String): Iterable[String] = {
-    getModelInstances(declaredType).map(genson.serialize)
+    getModelInstances(declaredType).map(genson.writeValueAsString)
   }
 
   /**
@@ -289,7 +304,7 @@ class DroolsEngine(kbaseName: String, drl: String, config: DroolsEngineConfig) e
    * @return json string option
    */
   def getModelFirstInstanceAsJson(declaredType: String): Option[String] = {
-    getModelFirstInstance(declaredType).map(genson.serialize)
+    getModelFirstInstance(declaredType).map(genson.writeValueAsString)
   }
 
   /**

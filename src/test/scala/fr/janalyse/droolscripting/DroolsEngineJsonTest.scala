@@ -147,8 +147,8 @@ class DroolsEngineJsonTest extends AnyFlatSpec with should.Matchers {
         |end
         |""".stripMargin
     val engine = DroolsEngine(drl)
-    engine.insertJson("""LOW""", "test.Priority")
-    engine.insertJson("""RED""", "test.Color")
+    engine.insertJson(""""LOW"""", "test.Priority")
+    engine.insertJson(""""RED"""", "test.Color")
     engine.insertJson("""{"priority":"LOW", "color":"GREEN"}""", "test.Combo")
     engine.fireAllRules()
     engine.getObjects should have size 3
