@@ -21,7 +21,6 @@ A selection of my drools shared code examples based on drools-scripting project 
 - [drools-backward-simple](https://gist.github.com/55b8f8d90570ac6546413734d552a418) : Simple drools backward chaining example.
 - [drools-equality](https://gist.github.com/db261d01a309a5aa7ba8bc28abb7dd2b) : Drools equality behavior and customization thanks to the `key` annotation.
 - [drools-insertLogical-aggregate-expires](https://gist.github.com/819826154cab02918563816002381245) : Understanding insertLogical, aggregates in the context of drools events reasoning, keeping up to date a computed value
-- [drools-kb-banking-advanced](https://gist.github.com/b5f0335b7c218b57e413a63633cad9f4) : Enhanced drools example banking application wired to a kafka topic
 - [drools-kb-advanced-understanding](https://gist.github.com/39a769215d16359be1bbe303c51b166f) : Drools advanced understanding rules knowledge base
 - [drools-kb-doctor](https://gist.github.com/6230af7afcb084dbb36b8f459a4d39c8) : Drools family knowledge base
 - [drools-kb-family](https://gist.github.com/3b7a586ca28eddba389d291fe814a7e8) : Drools family knowledge base
