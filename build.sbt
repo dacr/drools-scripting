@@ -1,32 +1,13 @@
 name         := "drools-scripting"
 organization := "fr.janalyse"
-homepage     := Some(url("https://github.com/dacr/drools-scripting"))
-scmInfo      := Some(ScmInfo(url(s"https://github.com/dacr/drools-scripting"), s"git@github.com:dacr/drools-scripting.git"))
+description  := "Make it easy to use drools expert system in scripts or small project"
 
 licenses += "NON-AI-APACHE2" -> url(s"https://github.com/non-ai-licenses/non-ai-licenses/blob/main/NON-AI-APACHE2")
 
-scmInfo := Some(
-  ScmInfo(
-    url(s"https://github.com/dacr/counters.git"),
-    s"git@github.com:dacr/counters.git"
-  )
-)
-
-developers := List(
-  Developer(
-    id = "dacr",
-    name = "David Crosson",
-    email = "crosson.david@gmail.com",
-    url = url("https://github.com/dacr")
-  )
-)
-
-scalaVersion := "3.5.1"
-scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature")
-
+scalaVersion       := "3.5.1"
 crossScalaVersions := Seq("2.13.15", "3.5.1")
 
-Test / fork := true // Required to avoid "logger conflict" between sbt and code tests
+scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature")
 
 lazy val versions = new {
   val drools  = "9.44.0.Final"
@@ -52,6 +33,8 @@ libraryDependencies ++= Seq(
   "org.scalatest"                 %% "scalatest"                     % "3.2.19" % "test"
 )
 
+Test / fork := true // Required to avoid "logger conflict" between sbt and code tests
+
 Test / testOptions += {
   val rel = scalaVersion.value.split("[.]").take(2).mkString(".")
   Tests.Argument(
@@ -60,3 +43,14 @@ Test / testOptions += {
     s"target/junitresults/scala-$rel/"
   )
 }
+
+homepage   := Some(url("https://github.com/dacr/drools-scripting"))
+scmInfo    := Some(ScmInfo(url(s"https://github.com/dacr/drools-scripting"), s"git@github.com:dacr/drools-scripting.git"))
+developers := List(
+  Developer(
+    id = "dacr",
+    name = "David Crosson",
+    email = "crosson.david@gmail.com",
+    url = url("https://github.com/dacr")
+  )
+)
